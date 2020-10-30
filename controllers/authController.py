@@ -1,6 +1,7 @@
 import sqlite3
 from models import authModel
 from views import authView
+from controllers import MainController
 
 class AuthController:
 	def __init__(self):
@@ -22,6 +23,9 @@ class AuthController:
 			# Attempts to login the user with their credentials provided
 			result = self.model.attemptLogin(credentials['uid'], credentials['password'])
 			print(result)
+			if result is not None:
+				MainController.MainController().run(credentials['uid']) # move to main controller
+
 
 		elif authAction == 'Create Account':
 			# Prompts and retrieves the desired uid
@@ -49,6 +53,7 @@ class AuthController:
 
 			# Creates an entry in the users table
 			self.model.createAccount(name, city, uid, password)
+			MainController.MainController().run(uid) # move to main controller
 		else: # Exit
 			return
 
