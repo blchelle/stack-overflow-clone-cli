@@ -7,3 +7,6 @@ A command-line interface for a stack overflow clone
 ## UML State Diagram
 ![Mini Project 1 UML State Diagram](https://user-images.githubusercontent.com/39068407/96800845-8e301b80-13c3-11eb-897a-17297863da41.png)
 **[See Full Size](https://user-images.githubusercontent.com/39068407/96800845-8e301b80-13c3-11eb-897a-17297863da41.png)**
+
+## Running Instruction
+To run the program execute: `python3 __init__.py`
