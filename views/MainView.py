@@ -12,7 +12,7 @@ class MainView(view.View):
 
         Returns
         -------
-        'Post a question' or 'Exit'
+        'Post a question' or 'Search for posts' or 'Exit'
         """
 
         options = [
@@ -22,6 +22,7 @@ class MainView(view.View):
                 'name': 'action method',
                 'choices': [
                     "Post a question",
+                    "Search for posts",
                     "Exit"
 
                 ]
@@ -53,3 +54,50 @@ class MainView(view.View):
         ]
 
         return prompt(postQuestionPrompts, style=self.style)
+
+    def getSearchValues(self):
+        """
+        Prompts the user to enter keyword to search for posts
+
+        Returns
+        -------
+        keywords for searching
+        """
+
+        SearchPrompts = [
+            {
+                'type': 'input',
+                'message': 'Enter one or more keyword to Search: ',
+                'name': 'keywords'
+            }
+        ]
+
+        return prompt(SearchPrompts, style=self.style)
+
+    def getPostSearchAction(self,results):
+        """
+        Prompts the user to choose post from Search results
+
+        Returns
+        -------
+        selected post
+        """
+        listy=[]
+        for post in results:
+            string=""
+            for column in post:
+                string+=str(column)
+                string+=" "
+            listy.append(string)
+
+
+        postSearchPrompts = [
+            {
+                'type': 'list',
+                'message': 'Select an action',
+                'name': 'action method',
+                'choices': listy
+            }
+        ]
+
+        return prompt(postSearchPrompts, style=self.style)
