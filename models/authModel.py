@@ -72,7 +72,8 @@ class AuthModel(model.Model):
 		uid : str
 			The uid given at the command-line
 
-		Return
+		Returns
+		-------
 		None or {}
 			None if no user has the uid specified
 			Otherwise, returns the user with the uid
@@ -89,3 +90,30 @@ class AuthModel(model.Model):
 		# Executes and returns the result of the query
 		self.cursor.execute(getUserQuery, (uid,))
 		return self.cursor.fetchone()
+
+	def checkIfUserIsPrivileged(self, uid):
+		"""
+		Determines if the user with the passed in uid is privileged or not
+
+		Parameters
+		----------
+		uid : str
+			The uid to check for
+
+		Returns
+		-------
+		bool
+			True if the user hasan entry in the privileged table, false otherwise
+		"""
+
+		# Query for finding a user in the privileged table
+		getUserPrivilegeQuery = \
+		'''
+			SELECT uid
+			FROM privileged
+			WHERE uid = ?
+		'''
+
+		# Executes the quuery to determine if the user is privileged
+		self.cursor.execute(getUserPrivilegeQuery, (uid,))
+		return self.cursor.fetchone() is not None

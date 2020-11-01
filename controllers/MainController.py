@@ -3,6 +3,7 @@ from models import authModel
 from views import view
 from views import MainView
 from models import MainModel
+from controllers import postsController
 
 class MainController:
     def __init__(self):
@@ -39,7 +40,8 @@ class MainController:
             if(searchAction == "Show more results"):
                 searchAction = self.mainView.getPostSearchAction(result,max_len,False)
 
-            self.run(user)
+            selectedPost = searchAction.split()[0]
+            postsController.PostsController().run(user, selectedPost)
 
         else: # Exit
             return
