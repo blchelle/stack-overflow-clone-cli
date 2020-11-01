@@ -1,6 +1,63 @@
 from models import model
 
 class PostsModel(model.Model):
+	def checkIfPostIsQuestion(self, pid):
+		"""
+		Determines if the post is a question
+
+		Parameters
+		----------
+		pid : str
+			The pid of the post
+
+		Returns
+		-------
+		bool
+			True if the post is a question
+			False otherwise
+		"""
+
+		postIsQuestionQuery = \
+		'''
+			SELECT pid
+			FROM questions
+			WHERE pid = ?
+		'''
+
+		self.cursor.execute(postIsQuestionQuery, (pid,))
+		return self.cursor.fetchone() is not None
+
+	def checkIfUserHasVotedOnPost(self, pid, uid):
+		"""
+		Determines if the user has voted on the post
+
+		Parameters
+		----------
+		pid : str
+			The pid of the post
+		uid : str
+			The uid of the user
+
+		Returns
+		-------
+		bool
+			True if the user has voted on the post
+			False otherwise
+		"""
+
+		userHasVotedQuery = \
+		'''
+			SELECT uid, pid
+			FROM votes
+			WHERE
+				pid = ?
+				AND uid = ?
+		'''
+
+		self.cursor.execute(userHasVotedQuery, (pid, uid,))
+		return self.cursor.fetchone() is not None
+
+
 	def addVoteToPost(self, pid, uid):
 		"""
 		Adds a row to the votes table for the post and user specified
@@ -111,4 +168,4 @@ class PostsModel(model.Model):
 			The body of the answer post
 		qid : str
 			The pid of the question which the post is answering
-		"""~
+		"""
