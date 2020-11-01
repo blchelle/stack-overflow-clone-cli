@@ -1,6 +1,5 @@
 from models import model
 import uuid
-import pandas as pd
 
 class MainModel(model.Model):
 
@@ -64,30 +63,30 @@ class MainModel(model.Model):
         '''
         keywords = keywordString.split()
         s=""
-        tag_count=""
         s+=searchPostsQuery_1
         for keyword in keywords:
-            s+="    (p.title like \'%"
+
+            if(keyword!=keywords[0]):
+                s+=" + "
+
+            s+='''
+            ((p.title like \'%'''
             s+=keyword
-            s+="%\')+"
+            s+="%\') OR "
 
             s+="(p.body like \'%"
             s+=keyword
-            s+="%\')+"
+            s+="%\') OR "
 
-            if(keyword!=keywords[0]):
-                tag_count+="or "
-            tag_count+="t.tag=\'"
-            tag_count+=keyword
-            tag_count+="\' "
-            
-        s+='''
-            (SELECT COUNT(DISTINCT t.tag) FROM tags t WHERE ('''
-        s+=tag_count
-        s+=") AND t.pid=p.pid) AS Matches "
+            s+="(SELECT COUNT(DISTINCT t.tag) FROM tags t WHERE t.tag like \'%"
+            s+=keyword
+            s+="%\'AND t.pid=p.pid))"
+
+        s+=''' 
+            AS Matches '''
         s+='''FROM posts p
             ORDER BY Matches DESC
-            LIMIT 5;'''
+            ;'''
 
 
         # print(s)
@@ -98,8 +97,16 @@ class MainModel(model.Model):
         # row	=self.cursor.fetchone()	
         # print(row.keys())
         result=self.cursor.fetchall()
-        print(pd.read_sql_query(s,self.connection))
+        #print(pd.read_sql_query(s,self.connection))
+        
+        self.cursor.execute("SELECT MAX(LENGTH(pid)) FROM posts;")
+        pid_len = self.cursor.fetchone()
+        self.cursor.execute("SELECT MAX(LENGTH(title)) FROM posts;")
+        title_len = self.cursor.fetchone()
+        self.cursor.execute("SELECT MAX(LENGTH(body)) FROM posts;")
+        body_len = self.cursor.fetchone()
+        max_len=[pid_len[0],10,title_len[0],body_len[0]]
 	
 
         self.connection.commit()
-        return result
+        return result,max_len

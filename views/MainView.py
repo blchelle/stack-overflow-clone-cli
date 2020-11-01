@@ -74,30 +74,39 @@ class MainView(view.View):
 
         return prompt(SearchPrompts, style=self.style)
 
-    def getPostSearchAction(self,results):
+    def getPostSearchAction(self,result,max_len,showprompt):
         """
-        Prompts the user to choose post from Search results
+        Prompts the user to choose post from Search result
 
         Returns
         -------
         selected post
         """
         listy=[]
-        for post in results:
+
+        for post in result:
             string=""
+            i=0
             for column in post:
-                string+=str(column)
-                string+=" "
+                if(i <4):
+                    string+=str(column).ljust(max_len[i], ' ')
+                else:
+                    string+=str(column)
+                string+="   "
+                i+=1
+
             listy.append(string)
+        if(showprompt):
+            listy.append("Show more results")
 
 
         postSearchPrompts = [
             {
                 'type': 'list',
-                'message': 'Select an action',
+                'message': 'Select a Post',
                 'name': 'action method',
                 'choices': listy
             }
         ]
 
-        return prompt(postSearchPrompts, style=self.style)
+        return prompt(postSearchPrompts, style=self.style)['action method']
