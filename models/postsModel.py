@@ -97,6 +97,26 @@ class PostsModel(model.Model):
 		self.cursor.execute(insertVoteQuery, (pid, vno, uid,))
 		self.connection.commit()
 
+	def checkIfAnswerIsAccepted(self, aid):
+		"""
+		Determines if the answer to a question is already the accepted answer
+
+		Parameters
+		----------
+		aid : str
+			The pid of the answer
+		"""
+
+		answerIsAcceptedQuery = \
+		'''
+			SELECT *
+			FROM questions
+			WHERE theaid = ?
+		'''
+
+		self.cursor.execute(answerIsAcceptedQuery, (aid,))
+		return self.cursor.fetchone() is not None
+
 	def checkIfQuestionHasAnAcceptedAnswer(self, qid):
 		"""
 		Determines if a question already has an accepted answer

@@ -3,7 +3,7 @@ from PyInquirer import prompt
 
 class PostsView(view.View):
 
-	def getPostAction(self, postIsQuestion, userHasVoted, userIsPrivileged):
+	def getPostAction(self, postIsQuestion, userHasVoted, userIsPrivileged, answerIsAccepted):
 		"""
 		Asks the user how they'd like to authenticate and returns the result
 
@@ -14,16 +14,18 @@ class PostsView(view.View):
 
 		choices = []
 		if not userHasVoted:
-			choices.append("Upvote Post")
+			choices.append('Upvote Post')
 		if postIsQuestion:
-			choices.append("Answer Question")
+			choices.append('Answer Question')
 		if userIsPrivileged:
-			choices.append("Give Badge to Poster")
-			choices.append("Add Tag to Post")
-			choices.append("Edit Post")
+			choices.append('Give Badge to Poster')
+			choices.append('Add Tag to Post')
+			choices.append('Edit Post')
 
-			if not postIsQuestion:
-				choices.append("Mark Answer As Accepted")
+			if not postIsQuestion and not answerIsAccepted:
+				choices.append('Mark Answer As Accepted')
+
+		choices.append('Back')
 
 
 		options = [
