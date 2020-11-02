@@ -1,4 +1,5 @@
 from models import model
+import uuid
 
 class PostsModel(model.Model):
 	def checkIfPostIsQuestion(self, pid):
@@ -73,14 +74,17 @@ class PostsModel(model.Model):
 		# Query for getting the number of votes on a post
 		numVotesForPostQuery = \
 		'''
-			SELECT MAX(vno)
+			SELECT COUNT(*)
 			FROM votes
 			WHERE pid = ?;
 		'''
 
 		# Executes the query and adds 1 to the result for vno
 		self.cursor.execute(numVotesForPostQuery, (pid,))
-		vno = self.cursor.fetchone() + 1
+
+		numberOfVotes = int(self.cursor.fetchone()[0])
+		print(numberOfVotes)
+		vno = numberOfVotes + 1
 
 		# Query to inserts a new element into the votes table
 		insertVoteQuery = \
@@ -93,7 +97,27 @@ class PostsModel(model.Model):
 		self.cursor.execute(insertVoteQuery, (pid, vno, uid,))
 		self.connection.commit()
 
-	def getAcceptedAnswer(self, qid):
+	def checkIfAnswerIsAccepted(self, aid):
+		"""
+		Determines if the answer to a question is already the accepted answer
+
+		Parameters
+		----------
+		aid : str
+			The pid of the answer
+		"""
+
+		answerIsAcceptedQuery = \
+		'''
+			SELECT *
+			FROM questions
+			WHERE theaid = ?
+		'''
+
+		self.cursor.execute(answerIsAcceptedQuery, (aid,))
+		return self.cursor.fetchone() is not None
+
+	def checkIfQuestionHasAnAcceptedAnswer(self, qid):
 		"""
 		Determines if a question already has an accepted answer
 
@@ -104,9 +128,9 @@ class PostsModel(model.Model):
 
 		Returns
 		-------
-		None or str
-			None if there is no accepted answere
-			Otherwise, returrn the pid of the accepted answer
+		str or None
+			False if there is no accepted answer
+			True otherwise
 		"""
 
 		# Query to find the accepted answer for a question
@@ -114,11 +138,14 @@ class PostsModel(model.Model):
 		'''
 			SELECT theaid
 			FROM questions
-			WHERE qid = ?
+			WHERE pid = ?
 		'''
 
 		# Executes the query to find the accepted answer
 		self.cursor.execute(acceptedAnswerQuery, (qid,))
+		result = self.cursor.fetchone()
+		print(result)
+		return result is not None
 
 
 	def markAnswerAsAccepted(self, qid, theaid, userIsPriviliged):
@@ -146,14 +173,14 @@ class PostsModel(model.Model):
 		'''
 			UPDATE questions
 			SET theaid = ?
-			WHERE qid = ?
+			WHERE pid = ?
 		'''
 
 		# Executes the query to update the accepted answer for a question
-		self.cursor.execute(updateAcceptedAnswerQuery, (theaid, qid))
-		self.cursor.commit()
+		self.cursor.execute(updateAcceptedAnswerQuery, (theaid, qid,))
+		self.connection.commit()
 
-	def createAnswer(self, title, body, qid):
+	def createAnswer(self, title, body, qid, uid):
 		"""
 		Inserts a post into the posts table and the answers table
 
@@ -168,4 +195,59 @@ class PostsModel(model.Model):
 			The body of the answer post
 		qid : str
 			The pid of the question which the post is answering
+		uid : str
+			The uid of the user creating the answer
+
+		Returns
+		-------
+		bool
+			True if the answer was successfully inserted into both tables
+			False if there was an error at either step
 		"""
+
+		pid = str(uuid.uuid4()).replace('-','')
+
+		createAnswerQuery = \
+		'''
+			INSERT INTO answers
+			VALUES (?,?);
+		'''
+
+		createPostQuery = \
+		'''
+			INSERT INTO posts
+			VALUES (?,DATE('now'),?,?,?);
+		'''
+
+		try:
+			self.cursor.execute(createAnswerQuery, (pid, qid))
+			self.cursor.execute(createPostQuery, (pid, title, body, uid,))
+			self.connection.commit()
+			return True
+		except:
+			return False
+
+	def getQuestionAnsweredByPost(self, pid):
+		"""
+		Gets the qid of the question which the answer post is answering
+
+		Parameters
+		----------
+		pid : str
+			The pid of the answer
+
+		Returns
+		-------
+		str
+			The qid of the question answered by the answer
+		"""
+
+		getQuestionQuery = \
+		'''
+			SELECT qid
+			FROM answers
+			WHERE pid = ?
+		'''
+
+		self.cursor.execute(getQuestionQuery, (pid,))
+		return self.cursor.fetchone()[0]

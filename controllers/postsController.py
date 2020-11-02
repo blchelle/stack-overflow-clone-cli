@@ -13,20 +13,55 @@ class PostsController:
 		"""
 
 		userIsPrivileged = authModel.AuthModel().checkIfUserIsPrivileged(uid)
-		userHasVotedOnPost = self.model.checkIfUserHasVotedOnPost(pid, uid)
 		postIsQuestion = self.model.checkIfPostIsQuestion(pid)
 
-		postAction = self.view.getPostAction(postIsQuestion, userHasVotedOnPost, userIsPrivileged)
+		postAction = ''
+		while postAction is not 'Back':
+			userHasVotedOnPost = self.model.checkIfUserHasVotedOnPost(pid, uid)
+			postIsAcceptedAnswer = not postIsQuestion and self.model.checkIfAnswerIsAccepted(pid)
 
-		if postAction == 'Upvote Post':
-			print("Brocks")
-		elif postAction == 'Answer Question':
-			print("Archit")
-		elif postAction == 'Give Badge to Poster':
-			print("Archit")
-		elif postAction == 'Add Tag to Post':
-			print("Archit")
-		elif postAction == 'Mark Answer As Accepted':
-			print("Brocks")
-		elif postAction == 'Edit Post':
-			print("Archit")
+			# Prompts the user for the action they want to perform on the post
+			postAction = self.view.getPostAction(
+				postIsQuestion,
+				userHasVotedOnPost,
+				userIsPrivileged,postIsAcceptedAnswer
+			)
+
+
+
+			if postAction == 'Upvote Post':
+				self.model.addVoteToPost(pid, uid)
+				self.view.logMessage("Successfully upvoted post")
+
+			elif postAction == 'Answer Question':
+				postValues = self.view.getAnswerPostValues()
+				title = postValues['title']
+				body = postValues['body']
+				postCreationIsSuccessful = self.model.createAnswer(title, body, pid, uid)
+
+				if postCreationIsSuccessful:
+					self.view.logMessage("Successfully added your answer")
+				else:
+					self.view.logMessage("Failed to add your answer")
+
+			elif postAction == 'Give Badge to Poster':
+				print("Archit")
+
+			elif postAction == 'Add Tag to Post':
+				print("Archit")
+
+			elif postAction == 'Mark Answer As Accepted':
+				qid = self.model.getQuestionAnsweredByPost(pid)
+
+				questionHasAcceptedAnswer = self.model.checkIfQuestionHasAnAcceptedAnswer(qid)
+
+				if questionHasAcceptedAnswer:
+					overwriteAcceptedAnswer = self.view.promptToOverwriteAcceptedAnswer()
+
+					if overwriteAcceptedAnswer:
+						self.model.markAnswerAsAccepted(qid, pid, userIsPrivileged)
+				else:
+					self.model.markAnswerAsAccepted(qid, pid, userIsPrivileged)
+
+			elif postAction == 'Edit Post':
+				print("Archit")

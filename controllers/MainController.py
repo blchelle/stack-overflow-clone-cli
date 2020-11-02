@@ -17,31 +17,33 @@ class MainController:
         Runs through the main menu process
         """
         # Prompts and retrieves the users main action choice
-        mainAction = self.mainView.getMainAction()
 
-        if mainAction == 'Post a question':
-            # Prompts and recieves question values
-            postValues = self.mainView.getQuestionPostValues()
+        # Continuously prompt the user for the user until they specify "Log Out"
+        while True:
+            mainAction = self.mainView.getMainAction()
 
-            # posts question to database
-            self.model.postQuestion(postValues['title'], postValues['text'],user)
-            self.view.logMessage("Question posted successfully")
-            self.run(user)
+            if mainAction == 'Post a question':
+                # Prompts and recieves question values
+                postValues = self.mainView.getQuestionPostValues()
 
-        elif mainAction == 'Search for posts':
-            # Prompts and recieves question valuesx
-            postValues = self.mainView.getSearchValues()
+                # posts question to database
+                self.model.postQuestion(postValues['title'], postValues['text'],user)
+                self.view.logMessage("Question posted successfully")
+                self.run(user)
 
-            # posts question to database
-            result,max_len = self.model.searchPost(postValues['keywords'])
-            self.view.logMessage("Results displayed above")
-            searchAction = self.mainView.getPostSearchAction(result[0:5],max_len,True)
+            elif mainAction == 'Search for posts':
+                # Prompts and recieves question valuesx
+                postValues = self.mainView.getSearchValues()
 
-            if(searchAction == "Show more results"):
-                searchAction = self.mainView.getPostSearchAction(result,max_len,False)
+                # posts question to database
+                result,max_len = self.model.searchPost(postValues['keywords'])
+                self.view.logMessage("Results displayed above")
+                searchAction = self.mainView.getPostSearchAction(result[0:5],max_len,True)
 
-            selectedPost = searchAction.split()[0]
-            postsController.PostsController().run(user, selectedPost)
+                if(searchAction == "Show more results"):
+                    searchAction = self.mainView.getPostSearchAction(result,max_len,False)
 
-        else: # Exit
-            return
+                selectedPost = searchAction.split()[0]
+                postsController.PostsController().run(user, selectedPost)
+            else:
+                return
