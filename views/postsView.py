@@ -36,3 +36,47 @@ class PostsView(view.View):
 		]
 
 		return prompt(options, style=self.style)['post action']
+
+	def getAnswerPostValues(self):
+		"""
+		Prompts the user to enter title and body for an answer
+
+		Returns
+		-------
+		The title and body of an answer
+		"""
+
+		postAnswerPrompts = [
+			{
+				'type': 'input',
+				'message': 'Enter answer title:',
+				'name': 'title'
+			},
+			{
+				'type': 'input',
+				'message': 'Enter answer body: ',
+				'name': 'body'
+			}
+		]
+
+		return prompt(postAnswerPrompts, style=self.style)
+
+	def promptToOverwriteAcceptedAnswer(self):
+		"""
+		Prompts the user if they would like to overwrite the accepted answer for a question
+
+		Returns
+		-------
+		bool
+			True if the user selects yes,
+			False otherwise
+		"""
+
+		overwritePrompt = {
+			"type": "confirm",
+			"name": "confirm",
+			"message": "There is already an accepted answer, would you like to overwrite it?"
+		}
+
+		# Prompts the user if they want to overwrite the existing accepted anwser
+		return prompt(overwritePrompt, style=self.style)['confirm']

@@ -56,5 +56,3 @@ class AuthController:
 			MainController.MainController().run(uid) # move to main controller
 		else: # Exit
 			return
-
-		# TODO: Move into the main application
