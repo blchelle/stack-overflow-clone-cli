@@ -143,7 +143,9 @@ class PostsModel(model.Model):
 		# Executes the query to find the accepted answer
 		self.cursor.execute(acceptedAnswerQuery, (qid,))
 		result = self.cursor.fetchone()
-		return result is not None
+		print(result)
+		print('here')
+		return result[0] is not ''
 
 
 	def markAnswerAsAccepted(self, qid, theaid, userIsPrivileged):
