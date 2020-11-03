@@ -27,8 +27,6 @@ class PostsController:
 				userIsPrivileged,postIsAcceptedAnswer
 			)
 
-
-
 			if postAction == 'Upvote Post':
 				self.model.addVoteToPost(pid, uid)
 				self.view.logMessage("Successfully upvoted post")
@@ -45,20 +43,24 @@ class PostsController:
 					self.view.logMessage("Failed to add your answer")
 
 			elif postAction == 'Give Badge to Poster':
+				#Get the Badge details from user
 				badgeValues = self.view.getBadgeValues()
 				bType = badgeValues['bType']
 				bName = badgeValues['bName']
+				#Add the badge to the database and to the poster if not already there
 				badge_exists = self.model.addBadgeToPoster(bType,bName,pid,userIsPrivileged)
 				if(badge_exists):
-					print("Badge already exists, Enter another badge name")
+					self.view.logMessage("#ERROR: Badge already exists, Enter another badge name")
 					continue
 				self.view.logMessage("Successfully gave badge to poster")
 
 			elif postAction == 'Add Tag to Post':
+				#Get the Tag value from user
 				tagValue = self.view.getTagValue()
+				#Add the Tag to the database if not already there
 				tag_exists = self.model.addTagToPost(tagValue,pid,userIsPrivileged)
 				if(tag_exists):
-					print("Tag already exists, Enter another tag name")
+					self.view.logMessage("#ERROR: Tag already exists, Enter another tag name")
 					continue
 				self.view.logMessage("Successfully tagged the post")
 

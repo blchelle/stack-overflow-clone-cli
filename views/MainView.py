@@ -103,7 +103,8 @@ class MainView(view.View):
             postList.append(string)
         if(showprompt):
             postList.append("Show more results")
-            postList.append("Back")
+        
+        postList.append("Back")
 
 
         postSearchPrompts = [

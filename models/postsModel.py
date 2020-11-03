@@ -22,7 +22,7 @@ class PostsModel(model.Model):
 		'''
 			SELECT pid
 			FROM questions
-			WHERE pid = ?
+			WHERE pid = ?;
 		'''
 
 		self.cursor.execute(postIsQuestionQuery, (pid,))
@@ -52,7 +52,7 @@ class PostsModel(model.Model):
 			FROM votes
 			WHERE
 				pid = ?
-				AND uid = ?
+				AND uid = ?;
 		'''
 
 		self.cursor.execute(userHasVotedQuery, (pid, uid,))
@@ -111,7 +111,7 @@ class PostsModel(model.Model):
 		'''
 			SELECT *
 			FROM questions
-			WHERE theaid = ?
+			WHERE theaid = ?;
 		'''
 
 		self.cursor.execute(answerIsAcceptedQuery, (aid,))
@@ -138,7 +138,7 @@ class PostsModel(model.Model):
 		'''
 			SELECT theaid
 			FROM questions
-			WHERE pid = ?
+			WHERE pid = ?;
 		'''
 
 		# Executes the query to find the accepted answer
@@ -173,7 +173,7 @@ class PostsModel(model.Model):
 		'''
 			UPDATE questions
 			SET theaid = ?
-			WHERE pid = ?
+			WHERE pid = ?;
 		'''
 
 		# Executes the query to update the accepted answer for a question
@@ -246,7 +246,7 @@ class PostsModel(model.Model):
 		'''
 			SELECT qid
 			FROM answers
-			WHERE pid = ?
+			WHERE pid = ?;
 		'''
 
 		self.cursor.execute(getQuestionQuery, (pid,))
@@ -280,7 +280,7 @@ class PostsModel(model.Model):
 		'''
 			SELECT bname
 			FROM badges
-			WHERE bname like ?
+			WHERE bname like ?;
 		'''
 		self.cursor.execute(badgeExistsQuery, (bName,))
 		if(self.cursor.fetchone() is not None):
@@ -290,7 +290,7 @@ class PostsModel(model.Model):
 		'''
 			SELECT poster
 			FROM posts
-			WHERE pid=?
+			WHERE pid=?;
 		'''
 		self.cursor.execute(posterQuery, (pid,))
 		uid = self.cursor.fetchone()[0]
@@ -299,13 +299,13 @@ class PostsModel(model.Model):
 		addBadge = \
 		'''
 			INSERT INTO badges
-			VALUES (?,?)
+			VALUES (?,?);
 		'''
 
 		adduBadge = \
 		'''
 			INSERT INTO ubadges
-			VALUES (?,DATE('now'),?)
+			VALUES (?,DATE('now'),?);
 		'''
 
 		# Executes the query to update the accepted answer for a question
@@ -340,7 +340,7 @@ class PostsModel(model.Model):
 		'''
 			SELECT tag
 			FROM tags
-			WHERE tag like ?
+			WHERE tag like ?;
 		'''
 		self.cursor.execute(tagExistsQuery, (tag,))
 		if(self.cursor.fetchone() is not None):
@@ -351,7 +351,7 @@ class PostsModel(model.Model):
 		addTag = \
 		'''
 			INSERT INTO tags
-			VALUES (?,?)
+			VALUES (?,?);
 		'''
 
 		# Executes the query to update the accepted answer for a question
@@ -388,7 +388,7 @@ class PostsModel(model.Model):
 			UPDATE posts
 			SET title = ?,
     		body = ?
-			WHERE pid=? 
+			WHERE pid=?;
 		'''
 
 		self.cursor.execute(editPostQuery, (title, body, pid,))
