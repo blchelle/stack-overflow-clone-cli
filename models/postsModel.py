@@ -203,7 +203,7 @@ class PostsModel(model.Model):
 			False if there was an error at either step
 		"""
 
-		pid = str(uuid.uuid4()).replace('-','')
+		pid = str(uuid.uuid4()).replace('-','')[:4]
 
 		createAnswerQuery = \
 		'''

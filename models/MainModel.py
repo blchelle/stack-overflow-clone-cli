@@ -22,7 +22,7 @@ class MainModel(model.Model):
         None or {}
 
         """
-        pid = str(uuid.uuid4()).replace('-','')
+        pid = str(uuid.uuid4()).replace('-','')[:4]
         insertPostQuery = \
         '''
             INSERT INTO posts
@@ -105,7 +105,8 @@ class MainModel(model.Model):
         body_len = self.cursor.fetchone()
         #formatting lengths are retrived from max 
         max_len=[pid_len[0],10,title_len[0],body_len[0],4,4,4,4]
-	
+        if(None in max_len):
+            max_len=[10,10,10,10,10,10,10,10]
 
         self.connection.commit()
         return result,max_len

@@ -82,7 +82,6 @@ class MainView(view.View):
         selected post
         """
         postList=[]
-
         header=' PID'.ljust(max_len[0])
         header+='    '+'PDATE'.ljust(max_len[1])
         header+='   '+'Title'.ljust(max_len[2])
