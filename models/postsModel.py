@@ -143,7 +143,9 @@ class PostsModel(model.Model):
 		# Executes the query to find the accepted answer
 		self.cursor.execute(acceptedAnswerQuery, (qid,))
 		result = self.cursor.fetchone()
-		return result is not None
+		print(result)
+		print('here')
+		return result[0] is not ''
 
 
 	def markAnswerAsAccepted(self, qid, theaid, userIsPrivileged):
@@ -203,7 +205,7 @@ class PostsModel(model.Model):
 			False if there was an error at either step
 		"""
 
-		pid = str(uuid.uuid4()).replace('-','')
+		pid = str(uuid.uuid4()).replace('-','')[:4]
 
 		createAnswerQuery = \
 		'''

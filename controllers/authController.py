@@ -25,6 +25,8 @@ class AuthController:
 
 				if result is not None:
 					MainController.MainController().run(credentials['uid']) # move to main controller
+				else:
+					self.view.logMessage("#ERROR: Wrong uid or password, Try again")
 
 
 			elif authAction == 'Create Account':
@@ -33,6 +35,11 @@ class AuthController:
 
 				# Continuously prompts the user for a uid until is is not taken
 				uidIsUnique = self.model.getUserByUid(uid) == None
+				if(len(uid)>4):
+						self.view.logMessage('#ERROR: UID \'{}\' is longer than 4 characters.'.format(uid))
+						self.view.logMessage("Please enter a valid uid")
+						continue
+
 				while not uidIsUnique:
 					# Outputs an error message if the uid is not unique
 					self.view.logMessage('UID \'{}\' is taken :('.format(uid))
