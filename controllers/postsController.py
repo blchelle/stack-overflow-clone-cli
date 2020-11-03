@@ -6,13 +6,14 @@ class PostsController:
 	def __init__(self, pathToDB):
 		self.model = postsModel.PostsModel(pathToDB)
 		self.view = postsView.PostsView()
+		self.pathToDB = pathToDB
 
 	def run(self, uid, pid):
 		"""
 		Runs through the post action process
 		"""
 
-		userIsPrivileged = authModel.AuthModel().checkIfUserIsPrivileged(uid)
+		userIsPrivileged = authModel.AuthModel(self.pathToDB).checkIfUserIsPrivileged(uid)
 		postIsQuestion = self.model.checkIfPostIsQuestion(pid)
 
 		postAction = ''
@@ -20,20 +21,32 @@ class PostsController:
 			userHasVotedOnPost = self.model.checkIfUserHasVotedOnPost(pid, uid)
 			postIsAcceptedAnswer = not postIsQuestion and self.model.checkIfAnswerIsAccepted(pid)
 
+			if(not postIsQuestion):
+				linkedQ,linkedQDetails,max_len = self.model.getLinkedQuestion(pid)
+			else:
+				linkedQ=''
+
 			# Prompts the user for the action they want to perform on the post
 			postAction = self.view.getPostAction(
 				postIsQuestion,
 				userHasVotedOnPost,
-				userIsPrivileged,postIsAcceptedAnswer
+				userIsPrivileged,postIsAcceptedAnswer,linkedQ
 			)
 			if(postAction == {} ):
 				self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
 				continue
 			postAction = postAction['post action']
 
+			
+
 			if postAction == 'Upvote Post':
 				self.model.addVoteToPost(pid, uid)
 				self.view.logMessage("Successfully upvoted post")
+
+			elif postAction == ('Linked Question: ' +linkedQ):
+				self.view.showLinkedQ(linkedQDetails,max_len)
+				self.run(uid,linkedQ)
+				pass
 
 			elif postAction == 'Answer Question':
 				postValues = self.view.getAnswerPostValues()
