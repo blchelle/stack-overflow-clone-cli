@@ -37,7 +37,7 @@ class PostsView(view.View):
 			}
 		]
 
-		return prompt(options, style=self.style)['post action']
+		return prompt(options, style=self.style)
 
 	def getAnswerPostValues(self):
 		"""

@@ -26,6 +26,10 @@ class PostsController:
 				userHasVotedOnPost,
 				userIsPrivileged,postIsAcceptedAnswer
 			)
+			if(postAction == {} ):
+				self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
+				continue
+			postAction = postAction['post action']
 
 			if postAction == 'Upvote Post':
 				self.model.addVoteToPost(pid, uid)
@@ -45,6 +49,10 @@ class PostsController:
 			elif postAction == 'Give Badge to Poster':
 				#Get the Badge details from user
 				badgeValues = self.view.getBadgeValues()
+				if("bType" not in badgeValues):
+					self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
+					continue
+
 				bType = badgeValues['bType']
 				bName = badgeValues['bName']
 				#Add the badge to the database and to the poster if not already there
