@@ -48,21 +48,21 @@ class PostsController:
 					self.view.logMessage("Failed to add your answer")
 
 			elif postAction == 'Give Badge to Poster':
-				#Get the Badge details from user
-				badgeValues = self.view.getBadgeValues()
-				if("bType" not in badgeValues):
+				possibleBadges = self.model.getBadgeNames()
+
+				# Get the Badge details from user
+				badgeValues = self.view.getBadgeValues(possibleBadges)
+				if("bName" not in badgeValues):
 					self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
 					continue
 
-				bType = badgeValues['bType']
 				bName = badgeValues['bName']
-				#Add the badge to the database and to the poster if not already there
-				badge_exists = self.model.addBadgeToPoster(bType,bName,pid,userIsPrivileged)
-				if(badge_exists == -1):
-					self.view.logMessage("#ERROR: Badge already exists, Enter another badge name")
-					continue
+
+				# Add the badge to the database and to the poster if not already there
+				badge_exists = self.model.addBadgeToPoster(bName, pid, userIsPrivileged)
+
 				if(badge_exists == -2):
-					self.view.logMessage("#ERROR: User got a Badge today already, Try tomorrow")
+					self.view.logMessage("#ERROR: User got this Badge today already, Try again tomorrow")
 					continue
 				self.view.logMessage("Successfully gave badge to poster")
 

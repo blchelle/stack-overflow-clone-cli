@@ -106,34 +106,22 @@ class PostsView(view.View):
 
 		# Prompts the user if they want to overwrite the existing accepted anwser
 		return prompt(overwritePrompt, style=self.style)['confirm']
-	
-	def getBadgeValues(self):
+
+	def getBadgeValues(self, badgeNames):
 		"""
-		Asks the user which badge type and name to give poster 
+		Asks the user which badge type and name to give poster
 
 		Returns
 		-------
 		Badge Type and Name
 		"""
 
-		badges = []
-		badges.append('Gold')
-		badges.append('Silver')
-		badges.append('Bronze')
-
-
 		options = [
 			{
 				'type': 'list',
 				'message': 'Select the Type of Badge to give',
-				'name': 'bType',
-				'choices': badges
-			},
-
-			{
-				'type': 'input',
-				'message': 'Enter the Badge name:',
-				'name': 'bName'
+				'name': 'bName',
+				'choices': badgeNames
 			}
 		]
 
