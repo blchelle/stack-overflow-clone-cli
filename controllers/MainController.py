@@ -44,6 +44,9 @@ class MainController:
 
                 # finds all search results from the database
                 result,max_len = self.model.searchPost(postValues['keywords'])
+                if(result == []):
+                    self.view.logMessage("# NO MATCHING RESULTS, try a different keyword")
+                    continue
                 self.view.logMessage("Results displayed below")
                 #counters for showing 5 results at a time
                 show=5

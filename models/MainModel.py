@@ -23,7 +23,21 @@ class MainModel(model.Model):
         None or {}
 
         """
-        pid = str(uuid.uuid4()).replace('-','')[:4]
+
+        checkPIDExistsQuery = \
+        '''
+            SELECT pid
+            FROM posts
+            WHERE pid = ?;
+        '''
+        pidExists = True
+        while(pidExists):
+            pid = str(uuid.uuid4()).replace('-','')[:4]
+            self.cursor.execute(checkPIDExistsQuery,(pid,))
+            if(self.cursor.fetchone() is None):
+                pidExists = False
+
+
         insertPostQuery = \
         '''
             INSERT INTO posts
