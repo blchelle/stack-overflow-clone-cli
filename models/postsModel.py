@@ -1,5 +1,6 @@
 from models import model
 import uuid
+import sqlite3
 
 class PostsModel(model.Model):
 	def checkIfPostIsQuestion(self, pid):
@@ -25,8 +26,14 @@ class PostsModel(model.Model):
 			WHERE pid = ?;
 		'''
 
-		self.cursor.execute(postIsQuestionQuery, (pid,))
-		return self.cursor.fetchone() is not None
+		try:
+
+			self.cursor.execute(postIsQuestionQuery, (pid,))
+			return self.cursor.fetchone() is not None
+		except sqlite3.Error as e:
+			print(e)
+
+
 
 	def checkIfUserHasVotedOnPost(self, pid, uid):
 		"""
@@ -55,8 +62,13 @@ class PostsModel(model.Model):
 				AND uid = ?;
 		'''
 
-		self.cursor.execute(userHasVotedQuery, (pid, uid,))
-		return self.cursor.fetchone() is not None
+		try:
+			self.cursor.execute(userHasVotedQuery, (pid, uid,))
+			return self.cursor.fetchone() is not None
+		except sqlite3.Error as e:
+			print(e)
+
+
 
 
 	def addVoteToPost(self, pid, uid):
@@ -79,8 +91,15 @@ class PostsModel(model.Model):
 			WHERE pid = ?;
 		'''
 
-		# Executes the query and adds 1 to the result for vno
-		self.cursor.execute(numVotesForPostQuery, (pid,))
+		try:
+			# Executes the query and adds 1 to the result for vno
+			self.cursor.execute(numVotesForPostQuery, (pid,))
+		except sqlite3.Error as e:
+			self.connection.rollback()
+			print(e)
+
+
+
 
 		numberOfVotes = int(self.cursor.fetchone()[0])
 		vno = numberOfVotes + 1
@@ -92,9 +111,17 @@ class PostsModel(model.Model):
 			VALUES (?,?,DATE('now'),?);
 		'''
 
-		# Executes the query to insert a row in to the votes table
-		self.cursor.execute(insertVoteQuery, (pid, vno, uid,))
-		self.connection.commit()
+		try:
+			# Executes the query to insert a row in to the votes table
+			self.cursor.execute(insertVoteQuery, (pid, vno, uid,))
+			self.connection.commit()
+		except sqlite3.Error as e:
+			self.connection.rollback()
+			print(e)
+
+
+
+
 
 	def checkIfAnswerIsAccepted(self, aid):
 		"""
@@ -113,8 +140,13 @@ class PostsModel(model.Model):
 			WHERE theaid = ?;
 		'''
 
-		self.cursor.execute(answerIsAcceptedQuery, (aid,))
-		return self.cursor.fetchone() is not None
+		try:
+			self.cursor.execute(answerIsAcceptedQuery, (aid,))
+			return self.cursor.fetchone() is not None
+		except sqlite3.Error as e:
+			print(e)
+
+
 
 	def checkIfQuestionHasAnAcceptedAnswer(self, qid):
 		"""
@@ -140,10 +172,16 @@ class PostsModel(model.Model):
 			WHERE pid = ?;
 		'''
 
-		# Executes the query to find the accepted answer
-		self.cursor.execute(acceptedAnswerQuery, (qid,))
-		result = self.cursor.fetchone()
-		return result[0] is not ''
+		try:
+			# Executes the query to find the accepted answer
+			self.cursor.execute(acceptedAnswerQuery, (qid,))
+			result = self.cursor.fetchone()
+			return result[0] is not ''
+		except sqlite3.Error as e:
+			print(e)
+
+
+
 
 
 	def markAnswerAsAccepted(self, qid, theaid, userIsPrivileged):
@@ -174,9 +212,16 @@ class PostsModel(model.Model):
 			WHERE pid = ?;
 		'''
 
-		# Executes the query to update the accepted answer for a question
-		self.cursor.execute(updateAcceptedAnswerQuery, (theaid, qid,))
-		self.connection.commit()
+		try:
+			# Executes the query to update the accepted answer for a question
+			self.cursor.execute(updateAcceptedAnswerQuery, (theaid, qid,))
+			self.connection.commit()
+		except sqlite3.Error as e:
+			self.connection.rollback()
+			print(e)
+
+
+
 
 	def createAnswer(self, title, body, qid, uid):
 		"""
@@ -223,6 +268,7 @@ class PostsModel(model.Model):
 			self.connection.commit()
 			return True
 		except:
+			self.connection.rollback()
 			return False
 
 	def getQuestionAnsweredByPost(self, pid):
@@ -247,8 +293,14 @@ class PostsModel(model.Model):
 			WHERE pid = ?;
 		'''
 
-		self.cursor.execute(getQuestionQuery, (pid,))
-		return self.cursor.fetchone()[0]
+
+		try:
+			self.cursor.execute(getQuestionQuery, (pid,))
+			return self.cursor.fetchone()[0]
+		except sqlite3.Error as e:
+			print(e)
+
+
 
 	def addBadgeToPoster(self,bType,bName,pid,userIsPrivileged):
 		"""
@@ -273,16 +325,23 @@ class PostsModel(model.Model):
 			return
 
 		# Query to add the badge to poster
-	
+
 		badgeExistsQuery = \
 		'''
 			SELECT bname
 			FROM badges
 			WHERE bname like ?;
 		'''
-		self.cursor.execute(badgeExistsQuery, (bName,))
-		if(self.cursor.fetchone() is not None):
-			return -1
+
+		try:
+			self.cursor.execute(badgeExistsQuery, (bName,))
+			if(self.cursor.fetchone() is not None):
+				return -1
+		except sqlite3.Error as e:
+			print(e)
+
+
+
 
 		posterQuery = \
 		'''
@@ -290,8 +349,15 @@ class PostsModel(model.Model):
 			FROM posts
 			WHERE pid=?;
 		'''
-		self.cursor.execute(posterQuery, (pid,))
-		uid = self.cursor.fetchone()[0]
+
+		try:
+
+			self.cursor.execute(posterQuery, (pid,))
+			uid = self.cursor.fetchone()[0]
+		except sqlite3.Error as e:
+			print(e)
+
+
 
 		ubadgeExistsQuery = \
 		'''
@@ -299,9 +365,17 @@ class PostsModel(model.Model):
 			FROM ubadges
 			WHERE bdate = DATE('now') and uid = ?;
 		'''
-		self.cursor.execute(ubadgeExistsQuery, (uid,))
-		if(self.cursor.fetchone() is not None):
-			return -2
+
+
+		try:
+			self.cursor.execute(ubadgeExistsQuery, (uid,))
+			if(self.cursor.fetchone() is not None):
+				return -2
+		except sqlite3.Error as e:
+			print(e)
+
+
+
 
 		addBadge = \
 		'''
@@ -315,11 +389,18 @@ class PostsModel(model.Model):
 			VALUES (?,DATE('now'),?);
 		'''
 
-		# Executes the query to update the accepted answer for a question
-		self.cursor.execute(addBadge, (bName, bType,))
-		self.cursor.execute(adduBadge, (uid,bName,))
-		self.connection.commit()
-		return False
+
+		try:
+			# Executes the query to update the accepted answer for a question
+			self.cursor.execute(addBadge, (bName, bType,))
+			self.cursor.execute(adduBadge, (uid,bName,))
+			self.connection.commit()
+			return False
+		except sqlite3.Error as e:
+			self.connection.rollback()
+			print(e)
+
+
 
 	def addTagToPost(self,tag,pid,userIsPrivileged):
 		"""
@@ -349,9 +430,15 @@ class PostsModel(model.Model):
 			FROM tags
 			WHERE tag like ?;
 		'''
-		self.cursor.execute(tagExistsQuery, (tag,))
-		if(self.cursor.fetchone() is not None):
-			return True
+
+		try:
+			self.cursor.execute(tagExistsQuery, (tag,))
+			if(self.cursor.fetchone() is not None):
+				return True
+		except sqlite3.Error as e:
+			print(e)
+
+
 
 		addTag = \
 		'''
@@ -359,10 +446,18 @@ class PostsModel(model.Model):
 			VALUES (?,?);
 		'''
 
-		# Executes the query to update the accepted answer for a question
-		self.cursor.execute(addTag, (pid,tag,))
-		self.connection.commit()
-		return False
+		try:
+			# Executes the query to update the accepted answer for a question
+			self.cursor.execute(addTag, (pid,tag,))
+			self.connection.commit()
+			return False
+		except sqlite3.Error as e:
+			self.connection.rollback()
+			print(e)
+
+
+
+
 
 	def editPost(self, pid, title, body):
 		"""
@@ -380,11 +475,16 @@ class PostsModel(model.Model):
 		Returns
 		-------
 		"""
-		
+
 		editPostQuery = \
 		'''
 			UPDATE posts
-			set title = ?, body = ? where pid = ?
+			set title = ?, body = ? where pid = ?;
 		'''
-		self.cursor.execute(editPostQuery, (title, body, pid))
-		self.connection.commit()
+
+		try:
+			self.cursor.execute(editPostQuery, (title, body, pid))
+			self.connection.commit()
+		except sqlite3.Error as e:
+			self.connection.rollback()
+			print(e)

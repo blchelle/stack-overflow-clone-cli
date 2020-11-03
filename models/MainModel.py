@@ -1,5 +1,6 @@
 from models import model
 import uuid
+import sqlite3
 
 class MainModel(model.Model):
 
@@ -33,11 +34,16 @@ class MainModel(model.Model):
             INSERT INTO questions
             VALUES (?,?);
         '''
+        try:
+            # Executes and commits the query with the passed in parameters
+            self.cursor.execute(insertPostQuery,(pid ,title, body, poster))
+            self.cursor.execute(insertQuestionQuery, (pid, ""))
+            self.connection.commit()
+        except sqlite3.Error as e:
+            self.connection.rollback()
+            print(e)
 
-        # Executes and commits the query with the passed in parameters
-        self.cursor.execute(insertPostQuery,(pid ,title, body, poster))
-        self.cursor.execute(insertQuestionQuery, (pid, ""))
-        self.connection.commit()
+
 
     def searchPost(self,keywordString):
         """
@@ -65,7 +71,7 @@ class MainModel(model.Model):
             (SELECT COUNT(DISTINCT a.pid) FROM questions q ,answers a WHERE q.pid=p.pid AND a.qid=q.pid) AS no_of_answers,
             (SELECT "N/A" FROM answers a WHERE p.pid = a.pid),
         '''
-      
+
         #For every  keyword, add the checks required and count matches and order them
         for keyword in keywords:
 
@@ -85,7 +91,7 @@ class MainModel(model.Model):
             s+=keyword
             s+="%\'AND t.pid=p.pid))"
 
-        s+=''' 
+        s+='''
             AS Matches '''
         s+='''FROM posts p
             WHERE Matches > 0
@@ -94,19 +100,23 @@ class MainModel(model.Model):
 
 
         #   Executes and commits the query with the passed in parameters
-        self.cursor.execute(s)
-        result=self.cursor.fetchall()
-        
-        self.cursor.execute("SELECT MAX(LENGTH(pid)) FROM posts;")
-        pid_len = self.cursor.fetchone()
-        self.cursor.execute("SELECT MAX(LENGTH(title)) FROM posts;")
-        title_len = self.cursor.fetchone()
-        self.cursor.execute("SELECT MAX(LENGTH(body)) FROM posts;")
-        body_len = self.cursor.fetchone()
-        #formatting lengths are retrived from max 
-        max_len=[pid_len[0],10,title_len[0],body_len[0],4,4,4,4]
-        if(None in max_len):
-            max_len=[10,10,10,10,10,10,10,10]
+        try:
+            self.cursor.execute(s)
+            result=self.cursor.fetchall()
 
-        self.connection.commit()
-        return result,max_len
+            self.cursor.execute("SELECT MAX(LENGTH(pid)) FROM posts;")
+            pid_len = self.cursor.fetchone()
+            self.cursor.execute("SELECT MAX(LENGTH(title)) FROM posts;")
+            title_len = self.cursor.fetchone()
+            self.cursor.execute("SELECT MAX(LENGTH(body)) FROM posts;")
+            body_len = self.cursor.fetchone()
+            #formatting lengths are retrived from max
+            max_len=[pid_len[0],10,title_len[0],body_len[0],4,4,4,4]
+            if(None in max_len):
+                max_len=[10,10,10,10,10,10,10,10]
+
+            self.connection.commit()
+            return result,max_len
+        except sqlite3.Error as e:
+            self.connection.rollback()
+            print(e)

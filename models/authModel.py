@@ -1,5 +1,5 @@
 from models import model
-
+import sqlite3
 class AuthModel(model.Model):
 
 	def attemptLogin(self, uid, password):
@@ -32,9 +32,12 @@ class AuthModel(model.Model):
 				AND pwd = ?;
 		'''
 
-		# Executes the query with the passed in parameters
-		self.cursor.execute(loginQuery, (uid, password,))
-		return self.cursor.fetchone()
+		try:
+			self.cursor.execute(loginQuery, (uid, password,))
+			return self.cursor.fetchone()
+		except sqlite3.Error as e:
+			
+			print(e)
 
 	def createAccount(self, name, city, uid, password):
 		"""
@@ -59,9 +62,17 @@ class AuthModel(model.Model):
 			VALUES (?,?,?,?,DATE('now'));
 		'''
 
-		# Executes and commits the query with the passed in parameters
-		self.cursor.execute(insertUserQuery, (uid, name, password, city,))
-		self.connection.commit()
+
+		try:
+			# Executes and commits the query with the passed in parameters
+			self.cursor.execute(insertUserQuery, (uid, name, password, city,))
+			self.connection.commit()
+		except sqlite3.Error as e:
+			self.connection.rollback()
+			print(e)
+
+
+
 
 	def getUserByUid(self, uid):
 		"""
@@ -87,9 +98,14 @@ class AuthModel(model.Model):
 			WHERE uid = ?;
 		'''
 
-		# Executes and returns the result of the query
-		self.cursor.execute(getUserQuery, (uid,))
-		return self.cursor.fetchone()
+		try:
+			# Executes and returns the result of the query
+			self.cursor.execute(getUserQuery, (uid,))
+			return self.cursor.fetchone()
+		except sqlite3.Error as e:
+			print(e)
+
+
 
 	def checkIfUserIsPrivileged(self, uid):
 		"""
@@ -114,6 +130,10 @@ class AuthModel(model.Model):
 			WHERE uid = ?;
 		'''
 
-		# Executes the quuery to determine if the user is privileged
-		self.cursor.execute(getUserPrivilegeQuery, (uid,))
-		return self.cursor.fetchone() is not None
+
+		try:
+			# Executes the query to determine if the user is privileged
+			self.cursor.execute(getUserPrivilegeQuery, (uid,))
+			return self.cursor.fetchone() is not None
+		except sqlite3.Error as e:
+			print(e)
