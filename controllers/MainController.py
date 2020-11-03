@@ -49,39 +49,45 @@ class MainController:
                     continue
                 self.view.logMessage("Results displayed below")
                 #counters for showing 5 results at a time
-                show=5
-                if(show+5>len(result)):
-                    more=False
+
+                numPostsRemaining = len(result) - 5
+                if (numPostsRemaining > 0):
+                    more = True
                 else:
-                    more=True
-                #posting results to screen
-                searchAction = self.mainView.getPostSearchAction(result[0:show],max_len,more)
+                    more = False
+
+                searchAction = self.mainView.getPostSearchAction(result[0:5], max_len, more)
                 if(searchAction == {} ):
                     self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
                     continue
                 searchAction = searchAction['action method']
-                #posting selected post to screen
+
+                # Posting selected post to screen
                 self.view.logMessage(" "+searchAction)
-                #setting counter for next 5 results if needed 
-                show+=5
-                if(show>len(result)):
-                    show=len(result)
-                    more = False
 
                 #show 5 more as asked more
+                pageNumber = 0
                 while(searchAction == "Show more results"):
                     #show the max results possible here and break
-                    if(show>len(result) or more ):
-                        show=len(result)
-                        more=False
-                        searchAction = self.mainView.getPostSearchAction(result[show-5:show],max_len,more)
-                        self.view.logMessage(" "+searchAction)
-                        break
+                    pageNumber += 1
 
-                    searchAction = self.mainView.getPostSearchAction(result[show-5:show],max_len,more)
-                    self.view.logMessage(" "+searchAction)
-                    show+=5
+                    if (numPostsRemaining - 5 > 0):
+                        more = True
+                    else:
+                        more = False
 
+                    searchAction = self.mainView.getPostSearchAction(
+                        result[pageNumber * 5 : pageNumber * 5 + min(numPostsRemaining, 5)],
+                        max_len,
+                        more
+                    )
+
+                    if(searchAction == {} ):
+                        self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
+                        continue
+                    searchAction = searchAction['action method']
+
+                    numPostsRemaining -= 5
 
                 if(searchAction == "Back"):
                     continue
