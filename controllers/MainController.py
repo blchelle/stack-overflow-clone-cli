@@ -1,15 +1,14 @@
-import sqlite3
-from models import authModel
 from views import view
 from views import MainView
 from models import MainModel
 from controllers import postsController
 
 class MainController:
-    def __init__(self):
-        self.model = MainModel.MainModel()
+    def __init__(self, pathToDb):
+        self.model = MainModel.MainModel(pathToDb)
         self.view = view.View()
         self.mainView = MainView.MainView()
+        self.pathToDb = pathToDb
 
 
     def run(self, user):
@@ -67,18 +66,18 @@ class MainController:
                         searchAction = self.mainView.getPostSearchAction(result[show-5:show],max_len,more)
                         self.view.logMessage(" "+searchAction)
                         break
-                
+
                     searchAction = self.mainView.getPostSearchAction(result[show-5:show],max_len,more)
                     self.view.logMessage(" "+searchAction)
                     show+=5
-                    
+
 
                 if(searchAction == "Back"):
                     continue
-                
+
                 #retrieve the post id and go to post action menu
                 selectedPost = searchAction.split()[0]
-                postsController.PostsController().run(user, selectedPost)
+                postsController.PostsController(self.pathToDb).run(user, selectedPost)
 
             else: # Log out
                 return

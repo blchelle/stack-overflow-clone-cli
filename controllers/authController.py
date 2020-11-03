@@ -1,12 +1,12 @@
-import sqlite3
 from models import authModel
 from views import authView
 from controllers import MainController
 
 class AuthController:
-	def __init__(self):
-		self.model = authModel.AuthModel()
+	def __init__(self, pathToDb):
+		self.model = authModel.AuthModel(pathToDb)
 		self.view = authView.AuthView()
+		self.pathToDb = pathToDb
 
 	def run(self):
 		"""
@@ -24,7 +24,7 @@ class AuthController:
 				result = self.model.attemptLogin(credentials['uid'], credentials['password'])
 
 				if result is not None:
-					MainController.MainController().run(credentials['uid']) # move to main controller
+					MainController.MainController(self.pathToDb).run(credentials['uid']) # move to main controller
 				else:
 					self.view.logMessage("#ERROR: Wrong uid or password, Try again")
 
@@ -60,7 +60,7 @@ class AuthController:
 
 				# Creates an entry in the users table
 				self.model.createAccount(name, city, uid, password)
-				MainController.MainController().run(uid) # move to main controller
+				MainController.MainController(self.pathToDb).run(uid) # move to main controller
 			else: # Exit
 				break
 		return
