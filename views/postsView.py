@@ -62,6 +62,30 @@ class PostsView(view.View):
 		]
 
 		return prompt(postAnswerPrompts, style=self.style)
+	def getPostValues(self):
+		"""
+		Prompts the user to enter title and body for a post
+
+		Returns
+		-------
+		The title and body of an answer
+		"""
+
+		postAnswerPrompts = [
+			{
+				'type': 'input',
+				'message': 'Enter post title:',
+				'name': 'title'
+			},
+			{
+				'type': 'input',
+				'message': 'Enter post body: ',
+				'name': 'body'
+			}
+		]
+
+		return prompt(postAnswerPrompts, style=self.style)
+
 
 	def promptToOverwriteAcceptedAnswer(self):
 		"""

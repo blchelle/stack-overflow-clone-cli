@@ -251,3 +251,28 @@ class PostsModel(model.Model):
 
 		self.cursor.execute(getQuestionQuery, (pid,))
 		return self.cursor.fetchone()[0]
+
+	def editPost(self, pid, title, body):
+		"""
+		edit posts with the specified pid
+
+		Parameters
+		----------
+		pid : str
+			The pid of the answer
+		title: str
+			The title of the post
+		body: str
+			The body of the posts
+
+		Returns
+		-------
+		"""
+		
+		editPostQuery = \
+		'''
+			UPDATE posts
+			set title = ?, body = ? where pid = ?
+		'''
+		self.cursor.execute(editPostQuery, (title, body, pid))
+		self.connection.commit()

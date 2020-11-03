@@ -64,4 +64,6 @@ class PostsController:
 					self.model.markAnswerAsAccepted(qid, pid, userIsPrivileged)
 
 			elif postAction == 'Edit Post':
-				print("Archit")
+				postValues = self.view.getPostValues()
+				self.model.editPost(pid, postValues['title'], postValues['body'])
+				self.view.logMessage("Post editted successfully")
