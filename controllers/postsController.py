@@ -6,13 +6,14 @@ class PostsController:
 	def __init__(self, pathToDB):
 		self.model = postsModel.PostsModel(pathToDB)
 		self.view = postsView.PostsView()
+		self.pathToDB = pathToDB
 
 	def run(self, uid, pid):
 		"""
 		Runs through the post action process
 		"""
 
-		userIsPrivileged = authModel.AuthModel().checkIfUserIsPrivileged(uid)
+		userIsPrivileged = authModel.AuthModel(self.pathToDB).checkIfUserIsPrivileged(uid)
 		postIsQuestion = self.model.checkIfPostIsQuestion(pid)
 
 		postAction = ''
