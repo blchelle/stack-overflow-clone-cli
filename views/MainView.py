@@ -28,7 +28,7 @@ class MainView(view.View):
             }
         ]
 
-        return prompt(options, style=self.style)['action method']
+        return prompt(options, style=self.style)
 
     def getQuestionPostValues(self):
         """
@@ -118,4 +118,4 @@ class MainView(view.View):
             }
         ]
 
-        return prompt(postSearchPrompts, style=self.style)['action method']
+        return prompt(postSearchPrompts, style=self.style)

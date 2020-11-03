@@ -1,15 +1,14 @@
-import sqlite3
-from models import authModel
 from views import view
 from views import MainView
 from models import MainModel
 from controllers import postsController
 
 class MainController:
-    def __init__(self):
-        self.model = MainModel.MainModel()
+    def __init__(self, pathToDb):
+        self.model = MainModel.MainModel(pathToDb)
         self.view = view.View()
         self.mainView = MainView.MainView()
+        self.pathToDb = pathToDb
 
 
     def run(self, user):
@@ -22,6 +21,10 @@ class MainController:
         while True:
 
             mainAction = self.mainView.getMainAction()
+            if(mainAction == {}):
+                self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
+                continue
+            mainAction = mainAction['action method']
 
             if mainAction == 'Post a question':
                 # Prompts and recieves question values
@@ -50,6 +53,10 @@ class MainController:
                     more=True
                 #posting results to screen
                 searchAction = self.mainView.getPostSearchAction(result[0:show],max_len,more)
+                if(searchAction == {} ):
+                    self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
+                    continue
+                searchAction = searchAction['action method']
                 #posting selected post to screen
                 self.view.logMessage(" "+searchAction)
                 #setting counter for next 5 results if needed 
@@ -67,18 +74,18 @@ class MainController:
                         searchAction = self.mainView.getPostSearchAction(result[show-5:show],max_len,more)
                         self.view.logMessage(" "+searchAction)
                         break
-                
+
                     searchAction = self.mainView.getPostSearchAction(result[show-5:show],max_len,more)
                     self.view.logMessage(" "+searchAction)
                     show+=5
-                    
+
 
                 if(searchAction == "Back"):
                     continue
-                
+
                 #retrieve the post id and go to post action menu
                 selectedPost = searchAction.split()[0]
-                postsController.PostsController().run(user, selectedPost)
+                postsController.PostsController(self.pathToDb).run(user, selectedPost)
 
             else: # Log out
                 return

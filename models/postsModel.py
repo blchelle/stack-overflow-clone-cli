@@ -174,8 +174,6 @@ class PostsModel(model.Model):
 			# Executes the query to find the accepted answer
 			self.cursor.execute(acceptedAnswerQuery, (qid,))
 			result = self.cursor.fetchone()
-			print(result)
-			print('here')
 			return result[0] is not ''
 		except sqlite3.Error as e:
 			print(e)
