@@ -354,8 +354,6 @@ class PostsModel(model.Model):
 		self.cursor.execute(tagExistsQuery, (tag,))
 		if(self.cursor.fetchone() is not None):
 			return True
-		
-		
 
 		addTag = \
 		'''
@@ -368,37 +366,27 @@ class PostsModel(model.Model):
 		self.connection.commit()
 		return False
 
-	def editPost(self, title, body, pid,userIsPrivileged):
+	def editPost(self, pid, title, body):
 		"""
-		Edits a post in the posts table 
-
+		edit posts with the specified pid
 
 		Parameters
 		----------
-		title : str
-			The title of the answer post
-		body : str
-			The body of the answer post
 		pid : str
-			The pid of the post
-		userIsPrivileged : boolean
-			Whether or not the user has permission to perform this action
+			The pid of the answer
+		title: str
+			The title of the post
+		body: str
+			The body of the posts
 
+		Returns
+		-------
 		"""
-
-		# Ensures that the user is privileged
-		# This option should be disabled from the view anyways,
-		# but its better to be defensive about it
-		if not userIsPrivileged:
-			return
-
+		
 		editPostQuery = \
 		'''
 			UPDATE posts
-			SET title = ?,
-    		body = ?
-			WHERE pid=?;
+			set title = ?, body = ? where pid = ?
 		'''
-
-		self.cursor.execute(editPostQuery, (title, body, pid,))
+		self.cursor.execute(editPostQuery, (title, body, pid))
 		self.connection.commit()

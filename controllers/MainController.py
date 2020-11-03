@@ -77,6 +77,6 @@ class MainController:
                 #retrieve the post id and go to post action menu
                 selectedPost = searchAction.split()[0]
                 postsController.PostsController().run(user, selectedPost)
-            else:
-                break
-        return
+
+            else: # Log out
+                return
