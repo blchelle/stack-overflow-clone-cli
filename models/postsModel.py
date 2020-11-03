@@ -314,7 +314,7 @@ class PostsModel(model.Model):
 
 
 
-	def addBadgeToPoster(self,bType,bName,pid,userIsPrivileged):
+	def addBadgeToPoster(self, bName, pid, userIsPrivileged):
 		"""
 		Add to the badges table and ubadges table
 
@@ -336,25 +336,6 @@ class PostsModel(model.Model):
 		if not userIsPrivileged:
 			return
 
-		# Query to add the badge to poster
-
-		badgeExistsQuery = \
-		'''
-			SELECT bname
-			FROM badges
-			WHERE bname like ?;
-		'''
-
-		try:
-			self.cursor.execute(badgeExistsQuery, (bName,))
-			if(self.cursor.fetchone() is not None):
-				return -1
-		except sqlite3.Error as e:
-			print(e)
-
-
-
-
 		posterQuery = \
 		'''
 			SELECT poster
@@ -363,21 +344,20 @@ class PostsModel(model.Model):
 		'''
 
 		try:
-
 			self.cursor.execute(posterQuery, (pid,))
 			uid = self.cursor.fetchone()[0]
 		except sqlite3.Error as e:
 			print(e)
-
-
+			return -2
 
 		ubadgeExistsQuery = \
 		'''
 			SELECT bname
 			FROM ubadges
-			WHERE bdate = DATE('now') and uid = ?;
+			WHERE
+				bdate = DATE('now')
+				AND uid = ?;
 		'''
-
 
 		try:
 			self.cursor.execute(ubadgeExistsQuery, (uid,))
@@ -385,15 +365,7 @@ class PostsModel(model.Model):
 				return -2
 		except sqlite3.Error as e:
 			print(e)
-
-
-
-
-		addBadge = \
-		'''
-			INSERT INTO badges
-			VALUES (?,?);
-		'''
+			return -2
 
 		adduBadge = \
 		'''
@@ -404,7 +376,6 @@ class PostsModel(model.Model):
 
 		try:
 			# Executes the query to update the accepted answer for a question
-			self.cursor.execute(addBadge, (bName, bType,))
 			self.cursor.execute(adduBadge, (uid,bName,))
 			self.connection.commit()
 			return False
@@ -500,6 +471,23 @@ class PostsModel(model.Model):
 		except sqlite3.Error as e:
 			self.connection.rollback()
 			print(e)
+
+	def getBadgeNames(self):
+		getBadgeNamesQuery = \
+		'''
+			SELECT bname
+			FROM badges
+		'''
+
+		self.cursor.execute(getBadgeNamesQuery)
+
+		results = self.cursor.fetchall()
+
+		badgeNames = []
+		for badgeName in results:
+			badgeNames.append(badgeName[0])
+
+		return badgeNames
 	
 	def getLinkedQuestion(self,pid):
 		"""
@@ -560,4 +548,3 @@ class PostsModel(model.Model):
 		except sqlite3.Error as e:
 			self.connection.rollback()
 			print(e)
-
