@@ -275,7 +275,7 @@ class PostsModel(model.Model):
 			return
 
 		# Query to add the badge to poster
-
+	
 		badgeExistsQuery = \
 		'''
 			SELECT bname
@@ -284,7 +284,7 @@ class PostsModel(model.Model):
 		'''
 		self.cursor.execute(badgeExistsQuery, (bName,))
 		if(self.cursor.fetchone() is not None):
-			return True
+			return -1
 
 		posterQuery = \
 		'''
@@ -295,6 +295,15 @@ class PostsModel(model.Model):
 		self.cursor.execute(posterQuery, (pid,))
 		uid = self.cursor.fetchone()[0]
 
+		ubadgeExistsQuery = \
+		'''
+			SELECT bname
+			FROM ubadges
+			WHERE bdate = DATE('now') and uid = ?;
+		'''
+		self.cursor.execute(ubadgeExistsQuery, (uid,))
+		if(self.cursor.fetchone() is not None):
+			return -2
 
 		addBadge = \
 		'''

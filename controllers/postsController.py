@@ -16,7 +16,7 @@ class PostsController:
 		postIsQuestion = self.model.checkIfPostIsQuestion(pid)
 
 		postAction = ''
-		while postAction is not 'Back':
+		while postAction != 'Back':
 			userHasVotedOnPost = self.model.checkIfUserHasVotedOnPost(pid, uid)
 			postIsAcceptedAnswer = not postIsQuestion and self.model.checkIfAnswerIsAccepted(pid)
 
@@ -49,8 +49,11 @@ class PostsController:
 				bName = badgeValues['bName']
 				#Add the badge to the database and to the poster if not already there
 				badge_exists = self.model.addBadgeToPoster(bType,bName,pid,userIsPrivileged)
-				if(badge_exists):
+				if(badge_exists == -1):
 					self.view.logMessage("#ERROR: Badge already exists, Enter another badge name")
+					continue
+				if(badge_exists == -2):
+					self.view.logMessage("#ERROR: User got a Badge today already, Try tomorrow")
 					continue
 				self.view.logMessage("Successfully gave badge to poster")
 
