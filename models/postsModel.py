@@ -95,6 +95,7 @@ class PostsModel(model.Model):
 			# Executes the query and adds 1 to the result for vno
 			self.cursor.execute(numVotesForPostQuery, (pid,))
 		except sqlite3.Error as e:
+			self.connection.rollback()
 			print(e)
 
 
@@ -115,6 +116,7 @@ class PostsModel(model.Model):
 			self.cursor.execute(insertVoteQuery, (pid, vno, uid,))
 			self.connection.commit()
 		except sqlite3.Error as e:
+			self.connection.rollback()
 			print(e)
 
 
@@ -215,6 +217,7 @@ class PostsModel(model.Model):
 			self.cursor.execute(updateAcceptedAnswerQuery, (theaid, qid,))
 			self.connection.commit()
 		except sqlite3.Error as e:
+			self.connection.rollback()
 			print(e)
 
 
@@ -265,6 +268,7 @@ class PostsModel(model.Model):
 			self.connection.commit()
 			return True
 		except:
+			self.connection.rollback()
 			return False
 
 	def getQuestionAnsweredByPost(self, pid):
@@ -393,6 +397,7 @@ class PostsModel(model.Model):
 			self.connection.commit()
 			return False
 		except sqlite3.Error as e:
+			self.connection.rollback()
 			print(e)
 
 
@@ -447,6 +452,7 @@ class PostsModel(model.Model):
 			self.connection.commit()
 			return False
 		except sqlite3.Error as e:
+			self.connection.rollback()
 			print(e)
 
 
@@ -480,4 +486,5 @@ class PostsModel(model.Model):
 			self.cursor.execute(editPostQuery, (title, body, pid))
 			self.connection.commit()
 		except sqlite3.Error as e:
+			self.connection.rollback()
 			print(e)

@@ -36,6 +36,7 @@ class AuthModel(model.Model):
 			self.cursor.execute(loginQuery, (uid, password,))
 			return self.cursor.fetchone()
 		except sqlite3.Error as e:
+			
 			print(e)
 
 	def createAccount(self, name, city, uid, password):
@@ -67,6 +68,7 @@ class AuthModel(model.Model):
 			self.cursor.execute(insertUserQuery, (uid, name, password, city,))
 			self.connection.commit()
 		except sqlite3.Error as e:
+			self.connection.rollback()
 			print(e)
 
 

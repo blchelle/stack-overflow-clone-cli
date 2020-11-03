@@ -40,6 +40,7 @@ class MainModel(model.Model):
             self.cursor.execute(insertQuestionQuery, (pid, ""))
             self.connection.commit()
         except sqlite3.Error as e:
+            self.connection.rollback()
             print(e)
 
 
@@ -117,4 +118,5 @@ class MainModel(model.Model):
             self.connection.commit()
             return result,max_len
         except sqlite3.Error as e:
+            self.connection.rollback()
             print(e)
