@@ -48,14 +48,17 @@ class PostsController:
 				badgeValues = self.view.getBadgeValues()
 				bType = badgeValues['bType']
 				bName = badgeValues['bName']
-				self.model.addBadgeToPoster(bType,bName,pid,userIsPrivileged)
+				badge_exists = self.model.addBadgeToPoster(bType,bName,pid,userIsPrivileged)
+				if(badge_exists):
+					print("Badge already exists, Enter another badge name")
+					continue
 				self.view.logMessage("Successfully gave badge to poster")
 
 			elif postAction == 'Add Tag to Post':
 				tagValue = self.view.getTagValue()
 				tag_exists = self.model.addTagToPost(tagValue,pid,userIsPrivileged)
 				if(tag_exists):
-					print("Tag already exists")
+					print("Tag already exists, Enter another tag name")
 					continue
 				self.view.logMessage("Successfully tagged the post")
 

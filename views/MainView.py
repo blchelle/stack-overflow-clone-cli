@@ -81,27 +81,29 @@ class MainView(view.View):
         -------
         selected post
         """
-        listy=[]
+        postList=[]
 
         header=' PID'.ljust(max_len[0])
         header+='    '+'PDATE'.ljust(max_len[1])
         header+='   '+'Title'.ljust(max_len[2])
         header+='   '+'Body'.ljust(max_len[3])
+        header+='  '+'UID'
+        header+='   '+'Votes'
+        header+='   '+'Answers\n'
 
         for post in result:
             string=""
             i=0
             for column in post:
-                if(i <4):
+                if(i <7):
                     string+=str(column).ljust(max_len[i], ' ')
-                else:
-                    string+=str(column)
                 string+="   "
                 i+=1
 
-            listy.append(string)
+            postList.append(string)
         if(showprompt):
-            listy.append("Show more results")
+            postList.append("Show more results")
+            postList.append("Back")
 
 
         postSearchPrompts = [
@@ -109,7 +111,7 @@ class MainView(view.View):
                 'type': 'list',
                 'message': header,
                 'name': 'action method',
-                'choices': listy
+                'choices': postList
             }
         ]
 

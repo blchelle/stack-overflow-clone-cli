@@ -105,7 +105,7 @@ class MainModel(model.Model):
         title_len = self.cursor.fetchone()
         self.cursor.execute("SELECT MAX(LENGTH(body)) FROM posts;")
         body_len = self.cursor.fetchone()
-        max_len=[pid_len[0],10,title_len[0],body_len[0]]
+        max_len=[pid_len[0],10,title_len[0],body_len[0],4,4,4]
 	
 
         self.connection.commit()

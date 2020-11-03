@@ -20,6 +20,7 @@ class MainController:
 
         # Continuously prompt the user for the user until they specify "Log Out"
         while True:
+
             mainAction = self.mainView.getMainAction()
 
             if mainAction == 'Post a question':
@@ -41,12 +42,33 @@ class MainController:
                 # posts question to database
                 result,max_len = self.model.searchPost(postValues['keywords'])
                 self.view.logMessage("Results displayed below")
-                searchAction = self.mainView.getPostSearchAction(result[0:5],max_len,True)
+                show=5
+                more=True
+                searchAction = self.mainView.getPostSearchAction(result[0:show],max_len,more)
+                self.view.logMessage(" "+searchAction)
+                show+=5
+                if(show>len(result)):
+                    show=len(result)
 
-                if(searchAction == "Show more results"):
-                    searchAction = self.mainView.getPostSearchAction(result,max_len,False)
+                while(searchAction == "Show more results"):
+                    if(show>len(result)):
+                        show=len(result)
+                        more=False
+                        searchAction = self.mainView.getPostSearchAction(result[show-5:show],max_len,more)
+                        self.view.logMessage(" "+searchAction)
+                        break
+                
+                    searchAction = self.mainView.getPostSearchAction(result[show-5:show],max_len,more)
+                    self.view.logMessage(" "+searchAction)
+                    show+=5
+                    if(show>len(result)):
+                        show=len(result)
+                        more=False
 
+                if(searchAction == "Back"):
+                    continue
                 selectedPost = searchAction.split()[0]
                 postsController.PostsController().run(user, selectedPost)
             else:
-                return
+                break
+        return

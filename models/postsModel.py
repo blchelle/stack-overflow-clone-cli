@@ -275,6 +275,17 @@ class PostsModel(model.Model):
 			return
 
 		# Query to add the badge to poster
+
+		badgeExistsQuery = \
+		'''
+			SELECT bname
+			FROM badges
+			WHERE bname like ?
+		'''
+		self.cursor.execute(badgeExistsQuery, (bName,))
+		if(self.cursor.fetchone() is not None):
+			return True
+
 		posterQuery = \
 		'''
 			SELECT poster
@@ -301,6 +312,7 @@ class PostsModel(model.Model):
 		self.cursor.execute(addBadge, (bName, bType,))
 		self.cursor.execute(adduBadge, (uid,bName,))
 		self.connection.commit()
+		return False
 
 	def addTagToPost(self,tag,pid,userIsPrivileged):
 		"""
