@@ -15,6 +15,10 @@ class AuthController:
 		while (True):
 			# Prompts and retrieves the users auth choice
 			authAction = self.view.getAuthenticationAction()
+			if(authAction == {} ):
+				self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
+				continue
+			authAction = authAction['auth method']
 
 			if authAction == 'Login':
 				# Prompts and retrieves the users credentials

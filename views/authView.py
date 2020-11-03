@@ -25,7 +25,7 @@ class AuthView(view.View):
 			}
 		]
 
-		return prompt(options, style=self.style)['auth method']
+		return prompt(options, style=self.style)
 
 	def getLoginCredentials(self):
 		"""

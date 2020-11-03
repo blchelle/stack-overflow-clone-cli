@@ -22,6 +22,10 @@ class MainController:
         while True:
 
             mainAction = self.mainView.getMainAction()
+            if(mainAction == {}):
+                self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
+                continue
+            mainAction = mainAction['action method']
 
             if mainAction == 'Post a question':
                 # Prompts and recieves question values
@@ -50,6 +54,10 @@ class MainController:
                     more=True
                 #posting results to screen
                 searchAction = self.mainView.getPostSearchAction(result[0:show],max_len,more)
+                if(searchAction == {} ):
+                    self.view.logMessage("#ERROR: Don't Click on the Options, Try again with keystrokes")
+                    continue
+                searchAction = searchAction['action method']
                 #posting selected post to screen
                 self.view.logMessage(" "+searchAction)
                 #setting counter for next 5 results if needed 
