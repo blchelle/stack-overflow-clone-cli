@@ -22,7 +22,7 @@ class AuthController:
 
 				# Attempts to login the user with their credentials provided
 				result = self.model.attemptLogin(credentials['uid'], credentials['password'])
-				print(result)
+
 				if result is not None:
 					MainController.MainController().run(credentials['uid']) # move to main controller
 
