@@ -45,5 +45,5 @@ class MainController:
 
                 selectedPost = searchAction.split()[0]
                 postsController.PostsController().run(user, selectedPost)
-            else:
+            else: # Log out
                 return
