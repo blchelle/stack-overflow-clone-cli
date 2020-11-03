@@ -45,10 +45,16 @@ class PostsController:
 					self.view.logMessage("Failed to add your answer")
 
 			elif postAction == 'Give Badge to Poster':
-				print("Archit")
+				badgeValues = self.view.getBadgeValues()
+				bType = badgeValues['bType']
+				bName = badgeValues['bName']
+				self.model.addBadgeToPoster(bType,bName,pid,userIsPrivileged)
+				self.view.logMessage("Successfully gave badge to poster")
 
 			elif postAction == 'Add Tag to Post':
-				print("Archit")
+				tagValue = self.view.getTagValue()
+				self.model.addTagToPost(tagValue,pid,userIsPrivileged)
+				self.view.logMessage("Successfully tagged the post")
 
 			elif postAction == 'Mark Answer As Accepted':
 				qid = self.model.getQuestionAnsweredByPost(pid)
@@ -64,4 +70,8 @@ class PostsController:
 					self.model.markAnswerAsAccepted(qid, pid, userIsPrivileged)
 
 			elif postAction == 'Edit Post':
-				print("Archit")
+				editpostValues = self.view.getEditPostValues()
+				editTitle = editpostValues['title']
+				editBody = editpostValues['body']
+				self.model.editPost(editTitle, editBody, pid,userIsPrivileged)
+				self.view.logMessage("Successfully edited the post")

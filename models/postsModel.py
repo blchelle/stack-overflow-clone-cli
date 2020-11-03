@@ -148,7 +148,7 @@ class PostsModel(model.Model):
 		return result is not None
 
 
-	def markAnswerAsAccepted(self, qid, theaid, userIsPriviliged):
+	def markAnswerAsAccepted(self, qid, theaid, userIsPrivileged):
 		"""
 		Updates a row in the questions table to change the accepted answer
 
@@ -165,7 +165,7 @@ class PostsModel(model.Model):
 		# Ensures that the user is privileged
 		# This option should be disabled from the view anyways,
 		# but its better to be defensive about it
-		if not userIsPriviliged:
+		if not userIsPrivileged:
 			return
 
 		# Query to update the accepted answer for a question
@@ -251,3 +251,120 @@ class PostsModel(model.Model):
 
 		self.cursor.execute(getQuestionQuery, (pid,))
 		return self.cursor.fetchone()[0]
+
+	def addBadgeToPoster(self,bType,bName,pid,userIsPrivileged):
+		"""
+		Add to the badges table and ubadges table
+
+		Parameters
+		----------
+		bType : str
+			Badge Type
+		bName : str
+			Name given to the badge by user for poster
+		pid : str
+			post id
+		userIsPrivileged : boolean
+			Whether or not the user has permission to perform this action
+		"""
+
+		# Ensures that the user is privileged
+		# This option should be disabled from the view anyways,
+		# but its better to be defensive about it
+		if not userIsPrivileged:
+			return
+
+		# Query to add the badge to poster
+		posterQuery = \
+		'''
+			SELECT poster
+			FROM posts
+			WHERE pid=?
+		'''
+		self.cursor.execute(posterQuery, (pid,))
+		uid = self.cursor.fetchone()[0]
+
+
+		addBadge = \
+		'''
+			INSERT INTO badges
+			VALUES (?,?)
+		'''
+
+		adduBadge = \
+		'''
+			INSERT INTO ubadges
+			VALUES (?,DATE('now'),?)
+		'''
+
+		# Executes the query to update the accepted answer for a question
+		self.cursor.execute(addBadge, (bName, bType,))
+		self.cursor.execute(adduBadge, (uid,bName,))
+		self.connection.commit()
+
+	def addTagToPost(self,tag,pid,userIsPrivileged):
+		"""
+		Add to the tags table
+
+		Parameters
+		----------
+		tag : str
+			tag name
+		pid : str
+			post id
+		userIsPrivileged : boolean
+			Whether or not the user has permission to perform this action
+		"""
+
+		# Ensures that the user is privileged
+		# This option should be disabled from the view anyways,
+		# but its better to be defensive about it
+		if not userIsPrivileged:
+			return
+
+		# Query to add the badge to poster
+
+		addTag = \
+		'''
+			INSERT INTO tags
+			VALUES (?,?)
+		'''
+
+		# Executes the query to update the accepted answer for a question
+		self.cursor.execute(addTag, (pid,tag,))
+		self.connection.commit()
+
+	def editPost(self, title, body, pid,userIsPrivileged):
+		"""
+		Edits a post in the posts table 
+
+
+		Parameters
+		----------
+		title : str
+			The title of the answer post
+		body : str
+			The body of the answer post
+		pid : str
+			The pid of the post
+		userIsPrivileged : boolean
+			Whether or not the user has permission to perform this action
+
+		"""
+
+		# Ensures that the user is privileged
+		# This option should be disabled from the view anyways,
+		# but its better to be defensive about it
+		if not userIsPrivileged:
+			return
+
+		editPostQuery = \
+		'''
+			UPDATE posts
+			SET title = ?,
+    		body = ?
+			WHERE pid=? 
+		'''
+
+		self.cursor.execute(editPostQuery, (title, body, pid,))
+		self.connection.commit()

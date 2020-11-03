@@ -29,15 +29,18 @@ class MainController:
                 # posts question to database
                 self.model.postQuestion(postValues['title'], postValues['text'],user)
                 self.view.logMessage("Question posted successfully")
-                self.run(user)
+                continue
 
             elif mainAction == 'Search for posts':
                 # Prompts and recieves question valuesx
                 postValues = self.mainView.getSearchValues()
+                if(postValues['keywords']==""):
+                    print("Please enter one or more keywords to search for")
+                    continue
 
                 # posts question to database
                 result,max_len = self.model.searchPost(postValues['keywords'])
-                self.view.logMessage("Results displayed above")
+                self.view.logMessage("Results displayed below")
                 searchAction = self.mainView.getPostSearchAction(result[0:5],max_len,True)
 
                 if(searchAction == "Show more results"):

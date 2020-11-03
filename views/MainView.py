@@ -83,6 +83,11 @@ class MainView(view.View):
         """
         listy=[]
 
+        header=' PID'.ljust(max_len[0])
+        header+='    '+'PDATE'.ljust(max_len[1])
+        header+='   '+'Title'.ljust(max_len[2])
+        header+='   '+'Body'.ljust(max_len[3])
+
         for post in result:
             string=""
             i=0
@@ -102,7 +107,7 @@ class MainView(view.View):
         postSearchPrompts = [
             {
                 'type': 'list',
-                'message': 'Select a Post',
+                'message': header,
                 'name': 'action method',
                 'choices': listy
             }

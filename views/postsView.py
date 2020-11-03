@@ -82,3 +82,81 @@ class PostsView(view.View):
 
 		# Prompts the user if they want to overwrite the existing accepted anwser
 		return prompt(overwritePrompt, style=self.style)['confirm']
+	
+	def getBadgeValues(self):
+		"""
+		Asks the user which badge type and name to give poster 
+
+		Returns
+		-------
+		Badge Type and Name
+		"""
+
+		badges = []
+		badges.append('Gold')
+		badges.append('Silver')
+		badges.append('Bronze')
+
+
+		options = [
+			{
+				'type': 'list',
+				'message': 'Select the Type of Badge to give',
+				'name': 'bType',
+				'choices': badges
+			},
+
+			{
+				'type': 'input',
+				'message': 'Enter the Badge name:',
+				'name': 'bName'
+			}
+		]
+
+		return prompt(options, style=self.style)
+
+	def getTagValue(self):
+		"""
+		Asks the value of the tag to be placed on the post
+
+		Returns
+		-------
+		Tag Name
+		"""
+
+
+		options = [
+
+			{
+				'type': 'input',
+				'message': 'Enter the Tag:',
+				'name': 'tag'
+			}
+		]
+
+		return prompt(options, style=self.style)['tag']
+
+	def getEditPostValues(self):
+		"""
+		Prompts the user to enter title and body for editing a post
+
+		Returns
+		-------
+		title and body string list
+		"""
+
+		editPostAnswerPrompts = [
+			{
+				'type': 'input',
+				'message': 'Enter new title:',
+				'name': 'title'
+			},
+			{
+				'type': 'input',
+				'message': 'Enter new body: ',
+				'name': 'body'
+			}
+		]
+
+		return prompt(editPostAnswerPrompts, style=self.style)
+
