@@ -35,7 +35,7 @@ class MainController:
             elif mainAction == 'Search for posts':
                 # Prompts and recieves search values
                 postValues = self.mainView.getSearchValues()
-                if(postValues['keywords']==""):
+                if(postValues['keywords'].strip()==""):
                     self.view.logMessage("#ERROR: Please enter one or more keywords to search for")
                     continue
 
@@ -44,7 +44,10 @@ class MainController:
                 self.view.logMessage("Results displayed below")
                 #counters for showing 5 results at a time
                 show=5
-                more=True
+                if(show+5>len(result)):
+                    more=False
+                else:
+                    more=True
                 #posting results to screen
                 searchAction = self.mainView.getPostSearchAction(result[0:show],max_len,more)
                 #posting selected post to screen
@@ -53,11 +56,12 @@ class MainController:
                 show+=5
                 if(show>len(result)):
                     show=len(result)
+                    more = False
 
                 #show 5 more as asked more
                 while(searchAction == "Show more results"):
                     #show the max results possible here and break
-                    if(show>len(result)):
+                    if(show>len(result) or more ):
                         show=len(result)
                         more=False
                         searchAction = self.mainView.getPostSearchAction(result[show-5:show],max_len,more)
@@ -67,9 +71,7 @@ class MainController:
                     searchAction = self.mainView.getPostSearchAction(result[show-5:show],max_len,more)
                     self.view.logMessage(" "+searchAction)
                     show+=5
-                    if(show>len(result)):
-                        show=len(result)
-                        more=False
+                    
 
                 if(searchAction == "Back"):
                     continue

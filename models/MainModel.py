@@ -63,6 +63,7 @@ class MainModel(model.Model):
             SELECT p.pid AS pID, p.pdate AS pDate , p.title AS Title , p.body AS Body , p.poster AS Poster,
             IFNULL((SELECT MAX(v.vno) FROM votes v WHERE p.pid=v.pid),0) AS no_of_votes,
             (SELECT COUNT(DISTINCT a.pid) FROM questions q ,answers a WHERE q.pid=p.pid AND a.qid=q.pid) AS no_of_answers,
+            (SELECT "N/A" FROM answers a WHERE p.pid = a.pid),
         '''
       
         #For every  keyword, add the checks required and count matches and order them
@@ -87,6 +88,7 @@ class MainModel(model.Model):
         s+=''' 
             AS Matches '''
         s+='''FROM posts p
+            WHERE Matches > 0
             ORDER BY Matches DESC
             ;'''
 
@@ -101,8 +103,8 @@ class MainModel(model.Model):
         title_len = self.cursor.fetchone()
         self.cursor.execute("SELECT MAX(LENGTH(body)) FROM posts;")
         body_len = self.cursor.fetchone()
-        #formatting lengths are retrived
-        max_len=[pid_len[0],10,title_len[0],body_len[0],4,4,4]
+        #formatting lengths are retrived from max 
+        max_len=[pid_len[0],10,title_len[0],body_len[0],4,4,4,4]
 	
 
         self.connection.commit()

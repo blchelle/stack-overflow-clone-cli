@@ -94,6 +94,9 @@ class MainView(view.View):
         for post in result:
             string=""
             i=0
+            post=list(post)
+            if(post[7] == 'N/A'):
+                post[6] = 'N/A'
             for column in post:
                 if(i <7):
                     string+=str(column).ljust(max_len[i], ' ')
