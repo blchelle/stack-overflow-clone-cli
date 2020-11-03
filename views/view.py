@@ -9,12 +9,12 @@ class View:
 
 	def __init__(self):
 		self.style = style_from_dict({
-			Token.Separator: '#cc5454',
-			Token.QuestionMark: '#673ab7 bold',
-			Token.Selected: '#cc5454',  # default
-			Token.Pointer: '#673ab7 bold',
+			Token.Separator: '#CC5454',
+			Token.QuestionMark: '#BCBBBB bold',
+			Token.Selected: '#F48024',  # default
+			Token.Pointer: '#F48024 bold',
 			Token.Instruction: '',  # default
-			Token.Answer: '#f44336 bold',
+			Token.Answer: '#F48024 bold',
 			Token.Question: '',
 		})
 

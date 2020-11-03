@@ -83,7 +83,6 @@ class PostsModel(model.Model):
 		self.cursor.execute(numVotesForPostQuery, (pid,))
 
 		numberOfVotes = int(self.cursor.fetchone()[0])
-		print(numberOfVotes)
 		vno = numberOfVotes + 1
 
 		# Query to inserts a new element into the votes table
@@ -144,7 +143,6 @@ class PostsModel(model.Model):
 		# Executes the query to find the accepted answer
 		self.cursor.execute(acceptedAnswerQuery, (qid,))
 		result = self.cursor.fetchone()
-		print(result)
 		return result is not None
 
 
