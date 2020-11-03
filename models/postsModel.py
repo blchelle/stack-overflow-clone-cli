@@ -22,7 +22,7 @@ class PostsModel(model.Model):
 		'''
 			SELECT pid
 			FROM questions
-			WHERE pid = ?
+			WHERE pid = ?;
 		'''
 
 		self.cursor.execute(postIsQuestionQuery, (pid,))
@@ -52,7 +52,7 @@ class PostsModel(model.Model):
 			FROM votes
 			WHERE
 				pid = ?
-				AND uid = ?
+				AND uid = ?;
 		'''
 
 		self.cursor.execute(userHasVotedQuery, (pid, uid,))
@@ -111,7 +111,7 @@ class PostsModel(model.Model):
 		'''
 			SELECT *
 			FROM questions
-			WHERE theaid = ?
+			WHERE theaid = ?;
 		'''
 
 		self.cursor.execute(answerIsAcceptedQuery, (aid,))
@@ -138,7 +138,7 @@ class PostsModel(model.Model):
 		'''
 			SELECT theaid
 			FROM questions
-			WHERE pid = ?
+			WHERE pid = ?;
 		'''
 
 		# Executes the query to find the accepted answer
@@ -148,7 +148,7 @@ class PostsModel(model.Model):
 		return result is not None
 
 
-	def markAnswerAsAccepted(self, qid, theaid, userIsPriviliged):
+	def markAnswerAsAccepted(self, qid, theaid, userIsPrivileged):
 		"""
 		Updates a row in the questions table to change the accepted answer
 
@@ -165,7 +165,7 @@ class PostsModel(model.Model):
 		# Ensures that the user is privileged
 		# This option should be disabled from the view anyways,
 		# but its better to be defensive about it
-		if not userIsPriviliged:
+		if not userIsPrivileged:
 			return
 
 		# Query to update the accepted answer for a question
@@ -173,7 +173,7 @@ class PostsModel(model.Model):
 		'''
 			UPDATE questions
 			SET theaid = ?
-			WHERE pid = ?
+			WHERE pid = ?;
 		'''
 
 		# Executes the query to update the accepted answer for a question
@@ -246,11 +246,125 @@ class PostsModel(model.Model):
 		'''
 			SELECT qid
 			FROM answers
-			WHERE pid = ?
+			WHERE pid = ?;
 		'''
 
 		self.cursor.execute(getQuestionQuery, (pid,))
 		return self.cursor.fetchone()[0]
+
+	def addBadgeToPoster(self,bType,bName,pid,userIsPrivileged):
+		"""
+		Add to the badges table and ubadges table
+
+		Parameters
+		----------
+		bType : str
+			Badge Type
+		bName : str
+			Name given to the badge by user for poster
+		pid : str
+			post id
+		userIsPrivileged : boolean
+			Whether or not the user has permission to perform this action
+		"""
+
+		# Ensures that the user is privileged
+		# This option should be disabled from the view anyways,
+		# but its better to be defensive about it
+		if not userIsPrivileged:
+			return
+
+		# Query to add the badge to poster
+	
+		badgeExistsQuery = \
+		'''
+			SELECT bname
+			FROM badges
+			WHERE bname like ?;
+		'''
+		self.cursor.execute(badgeExistsQuery, (bName,))
+		if(self.cursor.fetchone() is not None):
+			return -1
+
+		posterQuery = \
+		'''
+			SELECT poster
+			FROM posts
+			WHERE pid=?;
+		'''
+		self.cursor.execute(posterQuery, (pid,))
+		uid = self.cursor.fetchone()[0]
+
+		ubadgeExistsQuery = \
+		'''
+			SELECT bname
+			FROM ubadges
+			WHERE bdate = DATE('now') and uid = ?;
+		'''
+		self.cursor.execute(ubadgeExistsQuery, (uid,))
+		if(self.cursor.fetchone() is not None):
+			return -2
+
+		addBadge = \
+		'''
+			INSERT INTO badges
+			VALUES (?,?);
+		'''
+
+		adduBadge = \
+		'''
+			INSERT INTO ubadges
+			VALUES (?,DATE('now'),?);
+		'''
+
+		# Executes the query to update the accepted answer for a question
+		self.cursor.execute(addBadge, (bName, bType,))
+		self.cursor.execute(adduBadge, (uid,bName,))
+		self.connection.commit()
+		return False
+
+	def addTagToPost(self,tag,pid,userIsPrivileged):
+		"""
+		Add to the tags table
+
+		Parameters
+		----------
+		tag : str
+			tag name
+		pid : str
+			post id
+		userIsPrivileged : boolean
+			Whether or not the user has permission to perform this action
+		"""
+
+		# Ensures that the user is privileged
+		# This option should be disabled from the view anyways,
+		# but its better to be defensive about it
+		if not userIsPrivileged:
+			return
+
+		# Query to add the badge to poster
+
+		tagExistsQuery = \
+		'''
+			SELECT tag
+			FROM tags
+			WHERE tag like ?;
+		'''
+		self.cursor.execute(tagExistsQuery, (tag,))
+		if(self.cursor.fetchone() is not None):
+			return True
+
+		addTag = \
+		'''
+			INSERT INTO tags
+			VALUES (?,?);
+		'''
+
+		# Executes the query to update the accepted answer for a question
+		self.cursor.execute(addTag, (pid,tag,))
+		self.connection.commit()
+		return False
 
 	def editPost(self, pid, title, body):
 		"""

@@ -84,7 +84,7 @@ class AuthModel(model.Model):
 		'''
 			SELECT uid
 			FROM users
-			WHERE uid = ?
+			WHERE uid = ?;
 		'''
 
 		# Executes and returns the result of the query
@@ -111,7 +111,7 @@ class AuthModel(model.Model):
 		'''
 			SELECT uid
 			FROM privileged
-			WHERE uid = ?
+			WHERE uid = ?;
 		'''
 
 		# Executes the quuery to determine if the user is privileged

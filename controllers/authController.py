@@ -12,47 +12,48 @@ class AuthController:
 		"""
 		Runs through the authenticaiton process
 		"""
+		while (True):
+			# Prompts and retrieves the users auth choice
+			authAction = self.view.getAuthenticationAction()
 
-		# Prompts and retrieves the users auth choice
-		authAction = self.view.getAuthenticationAction()
+			if authAction == 'Login':
+				# Prompts and retrieves the users credentials
+				credentials = self.view.getLoginCredentials()
 
-		if authAction == 'Login':
-			# Prompts and retrieves the users credentials
-			credentials = self.view.getLoginCredentials()
-
-			# Attempts to login the user with their credentials provided
-			result = self.model.attemptLogin(credentials['uid'], credentials['password'])
-			print(result)
-			if result is not None:
-				MainController.MainController().run(credentials['uid']) # move to main controller
+				# Attempts to login the user with their credentials provided
+				result = self.model.attemptLogin(credentials['uid'], credentials['password'])
+				print(result)
+				if result is not None:
+					MainController.MainController().run(credentials['uid']) # move to main controller
 
 
-		elif authAction == 'Create Account':
-			# Prompts and retrieves the desired uid
-			uid = self.view.getCreateAccountUid()
-
-			# Continuously prompts the user for a uid until is is not taken
-			uidIsUnique = self.model.getUserByUid(uid) == None
-			while not uidIsUnique:
-				# Outputs an error message if the uid is not unique
-				self.view.logMessage('UID \'{}\' is taken :('.format(uid))
-
+			elif authAction == 'Create Account':
 				# Prompts and retrieves the desired uid
 				uid = self.view.getCreateAccountUid()
 
-				# Validates that the requested uid is available
+				# Continuously prompts the user for a uid until is is not taken
 				uidIsUnique = self.model.getUserByUid(uid) == None
+				while not uidIsUnique:
+					# Outputs an error message if the uid is not unique
+					self.view.logMessage('UID \'{}\' is taken :('.format(uid))
+
+					# Prompts and retrieves the desired uid
+					uid = self.view.getCreateAccountUid()
+
+					# Validates that the requested uid is available
+					uidIsUnique = self.model.getUserByUid(uid) == None
 
 
-			# Prompts and retrieves the remainder of the users credentials
-			credentials = self.view.getCreateAccountCredentials()
+				# Prompts and retrieves the remainder of the users credentials
+				credentials = self.view.getCreateAccountCredentials()
 
-			name = credentials['name']
-			city = credentials['city']
-			password = credentials['password']
+				name = credentials['name']
+				city = credentials['city']
+				password = credentials['password']
 
-			# Creates an entry in the users table
-			self.model.createAccount(name, city, uid, password)
-			MainController.MainController().run(uid) # move to main controller
-		else: # Exit
-			return
+				# Creates an entry in the users table
+				self.model.createAccount(name, city, uid, password)
+				MainController.MainController().run(uid) # move to main controller
+			else: # Exit
+				break
+		return

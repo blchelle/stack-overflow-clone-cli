@@ -54,16 +54,18 @@ class MainModel(model.Model):
         result: list of lists
 
         """
+        #Get the list of keywords to search for
+        keywords = keywordString.split()
 
-        searchPostsQuery_1 = \
+        #Create a String to include all keywords to search for in all needed tables
+        s = \
         '''
             SELECT p.pid AS pID, p.pdate AS pDate , p.title AS Title , p.body AS Body , p.poster AS Poster,
             IFNULL((SELECT MAX(v.vno) FROM votes v WHERE p.pid=v.pid),0) AS no_of_votes,
             (SELECT COUNT(DISTINCT a.pid) FROM questions q ,answers a WHERE q.pid=p.pid AND a.qid=q.pid) AS no_of_answers,
         '''
-        keywords = keywordString.split()
-        s=""
-        s+=searchPostsQuery_1
+      
+        #For every  keyword, add the checks required and count matches and order them
         for keyword in keywords:
 
             if(keyword!=keywords[0]):
@@ -89,15 +91,9 @@ class MainModel(model.Model):
             ;'''
 
 
-        # print(s)
-        # print("")
-
         #   Executes and commits the query with the passed in parameters
         self.cursor.execute(s)
-        # row	=self.cursor.fetchone()	
-        # print(row.keys())
         result=self.cursor.fetchall()
-        #print(pd.read_sql_query(s,self.connection))
         
         self.cursor.execute("SELECT MAX(LENGTH(pid)) FROM posts;")
         pid_len = self.cursor.fetchone()
@@ -105,7 +101,8 @@ class MainModel(model.Model):
         title_len = self.cursor.fetchone()
         self.cursor.execute("SELECT MAX(LENGTH(body)) FROM posts;")
         body_len = self.cursor.fetchone()
-        max_len=[pid_len[0],10,title_len[0],body_len[0]]
+        #formatting lengths are retrived
+        max_len=[pid_len[0],10,title_len[0],body_len[0],4,4,4]
 	
 
         self.connection.commit()
