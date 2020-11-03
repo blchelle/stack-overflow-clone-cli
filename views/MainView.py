@@ -90,6 +90,7 @@ class MainView(view.View):
         header+='   '+'Votes'
         header+='   '+'Answers\n'
 
+
         for post in result:
             string=""
             i=0

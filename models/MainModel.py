@@ -112,7 +112,7 @@ class MainModel(model.Model):
             ORDER BY Matches DESC
             ;'''
 
-
+        print(s)
         #   Executes and commits the query with the passed in parameters
         try:
             self.cursor.execute(s)
