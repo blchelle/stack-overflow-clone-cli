@@ -488,3 +488,63 @@ class PostsModel(model.Model):
 			badgeNames.append(badgeName[0])
 
 		return badgeNames
+	
+	def getLinkedQuestion(self,pid):
+		"""
+		returns linked question for pid answer
+
+		Parameters
+		----------
+		pid : str
+			The pid of the answer
+
+		Returns
+		-------
+		linkedQ : str
+			pid of the question
+		"""
+
+		getLinkedQQuery = \
+		'''
+			SELECT a.qid
+			FROM answers a
+			WHERE a.pid=?;
+		'''
+
+		getLinkedQDetailsQuery = \
+		'''
+			SELECT p.pid AS pID, p.pdate AS pDate , p.title AS Title , p.body AS Body , p.poster AS Poster,
+            IFNULL((SELECT MAX(v.vno) FROM votes v WHERE p.pid=v.pid),0) AS no_of_votes,
+            (SELECT COUNT(DISTINCT a.pid) FROM questions q ,answers a WHERE q.pid=p.pid AND a.qid=q.pid) AS no_of_answers,
+            (SELECT "N/A" FROM answers a WHERE p.pid = a.pid),
+
+            ((p.title like '%a%') OR (p.body like '%a%') OR (SELECT COUNT(DISTINCT t.tag) FROM tags t WHERE t.tag like '%a%'AND t.pid=p.pid))
+            AS Matches FROM posts p
+            WHERE p.pid = ? AND
+			Matches > 0
+            ;
+		'''
+
+		try:
+			self.cursor.execute(getLinkedQQuery, (pid,))
+			linkedQ = self.cursor.fetchone()
+			self.cursor.execute(getLinkedQDetailsQuery, linkedQ)
+			linkedQDetails = self.cursor.fetchall()
+			
+			self.cursor.execute("SELECT MAX(LENGTH(pid)) FROM posts;")
+			pid_len = self.cursor.fetchone()
+			self.cursor.execute("SELECT MAX(LENGTH(title)) FROM posts;")
+			title_len = self.cursor.fetchone()
+			self.cursor.execute("SELECT MAX(LENGTH(body)) FROM posts;")
+			body_len = self.cursor.fetchone()
+			
+			#formatting lengths are retrived from max
+			max_len=[pid_len[0],10,title_len[0],body_len[0],4,4,4,4]
+			if(None in max_len):
+				max_len=[10,10,10,10,10,10,10,10]
+
+			self.connection.commit()
+			return linkedQ[0],linkedQDetails[0],max_len
+		except sqlite3.Error as e:
+			self.connection.rollback()
+			print(e)

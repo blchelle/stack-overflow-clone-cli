@@ -3,7 +3,7 @@ from PyInquirer import prompt
 
 class PostsView(view.View):
 
-	def getPostAction(self, postIsQuestion, userHasVoted, userIsPrivileged, answerIsAccepted):
+	def getPostAction(self, postIsQuestion, userHasVoted, userIsPrivileged, answerIsAccepted,linkedQ):
 		"""
 		Asks the user how they'd like to authenticate and returns the result
 
@@ -17,6 +17,9 @@ class PostsView(view.View):
 			choices.append('Upvote Post')
 		if postIsQuestion:
 			choices.append('Answer Question')
+		else:
+			choices.append('Linked Question: ' +linkedQ)
+
 		if userIsPrivileged:
 			choices.append('Give Badge to Poster')
 			choices.append('Add Tag to Post')
@@ -171,4 +174,35 @@ class PostsView(view.View):
 		]
 
 		return prompt(editPostAnswerPrompts, style=self.style)
+
+	def showLinkedQ(self,linkedQDetails,max_len):
+		"""
+		Displays linked question info
+
+		Returns
+		-------
+		
+		"""
+		header='   PID'.ljust(max_len[0])
+		header+='    '+'PDATE'.ljust(max_len[1])
+		header+='   '+'Title'.ljust(max_len[2])
+		header+='   '+'Body'.ljust(max_len[3])
+		header+='  '+'UID'
+		header+='   '+'Votes'
+		header+='   '+'Answers'
+		
+		string="   "
+		i=0
+		linkedQDetails=list(linkedQDetails)
+		if(linkedQDetails[7] == 'N/A'):
+			linkedQDetails[6] = 'N/A'
+		for column in linkedQDetails:
+			if(i <7):
+				string+=str(column).ljust(max_len[i], ' ')
+			string+="   "
+			i+=1
+		print(header)
+		print(string)
+		print("")
+		
 
