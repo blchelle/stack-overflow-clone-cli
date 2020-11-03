@@ -3,8 +3,8 @@ from views import postsView
 from models import authModel
 
 class PostsController:
-	def __init__(self):
-		self.model = postsModel.PostsModel()
+	def __init__(self, pathToDB):
+		self.model = postsModel.PostsModel(pathToDB)
 		self.view = postsView.PostsView()
 
 	def run(self, uid, pid):
