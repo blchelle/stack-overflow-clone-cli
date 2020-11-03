@@ -53,7 +53,10 @@ class PostsController:
 
 			elif postAction == 'Add Tag to Post':
 				tagValue = self.view.getTagValue()
-				self.model.addTagToPost(tagValue,pid,userIsPrivileged)
+				tag_exists = self.model.addTagToPost(tagValue,pid,userIsPrivileged)
+				if(tag_exists):
+					print("Tag already exists")
+					continue
 				self.view.logMessage("Successfully tagged the post")
 
 			elif postAction == 'Mark Answer As Accepted':

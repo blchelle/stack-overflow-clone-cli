@@ -324,6 +324,18 @@ class PostsModel(model.Model):
 
 		# Query to add the badge to poster
 
+		tagExistsQuery = \
+		'''
+			SELECT tag
+			FROM tags
+			WHERE tag like ?
+		'''
+		self.cursor.execute(tagExistsQuery, (tag,))
+		if(self.cursor.fetchone() is not None):
+			return True
+		
+		
+
 		addTag = \
 		'''
 			INSERT INTO tags
@@ -333,6 +345,7 @@ class PostsModel(model.Model):
 		# Executes the query to update the accepted answer for a question
 		self.cursor.execute(addTag, (pid,tag,))
 		self.connection.commit()
+		return False
 
 	def editPost(self, title, body, pid,userIsPrivileged):
 		"""
