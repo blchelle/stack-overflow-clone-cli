@@ -62,6 +62,10 @@ class PostsController:
 			elif postAction == 'Give Badge to Poster':
 				possibleBadges = self.model.getBadgeNames()
 
+				if possibleBadges == []:
+					self.view.logMessage("#ERROR: There are no badges to give away")
+					continue
+
 				# Get the Badge details from user
 				badgeValues = self.view.getBadgeValues(possibleBadges)
 				if("bName" not in badgeValues):
