@@ -41,7 +41,7 @@ class MainModel(model.Model):
         insertPostQuery = \
         '''
             INSERT INTO posts
-            VALUES (?,DATE('now'),?,?,?);
+            VALUES (?,DATE('now', 'localtime'),?,?,?);
         '''
         insertQuestionQuery = \
         '''

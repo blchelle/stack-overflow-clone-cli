@@ -59,7 +59,7 @@ class AuthModel(model.Model):
 		insertUserQuery = \
 		'''
 			INSERT INTO users
-			VALUES (?,?,?,?,DATE('now'));
+			VALUES (?,?,?,?,DATE('now', 'localtime'));
 		'''
 
 

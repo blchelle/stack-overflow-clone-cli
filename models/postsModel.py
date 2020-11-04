@@ -108,7 +108,7 @@ class PostsModel(model.Model):
 		insertVoteQuery = \
 		'''
 			INSERT INTO votes
-			VALUES (?,?,DATE('now'),?);
+			VALUES (?,?,DATE('now', 'localtime'),?);
 		'''
 
 		try:
@@ -271,7 +271,7 @@ class PostsModel(model.Model):
 		createPostQuery = \
 		'''
 			INSERT INTO posts
-			VALUES (?,DATE('now'),?,?,?);
+			VALUES (?,DATE('now', 'localtime'),?,?,?);
 		'''
 
 		try:
@@ -355,7 +355,7 @@ class PostsModel(model.Model):
 			SELECT bname
 			FROM ubadges
 			WHERE
-				bdate = DATE('now')
+				bdate = DATE('now', 'localtime')
 				AND uid = ?;
 		'''
 
@@ -370,7 +370,7 @@ class PostsModel(model.Model):
 		adduBadge = \
 		'''
 			INSERT INTO ubadges
-			VALUES (?,DATE('now'),?);
+			VALUES (?,DATE('now', 'localtime'),?);
 		'''
 
 
