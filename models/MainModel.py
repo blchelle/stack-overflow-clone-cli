@@ -72,6 +72,7 @@ class MainModel(model.Model):
         Return
         ----------
         result: list of lists
+        max_len: list of formatting numbers
 
         """
         #Get the list of keywords to search for

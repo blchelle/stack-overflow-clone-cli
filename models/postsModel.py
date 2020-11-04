@@ -473,6 +473,18 @@ class PostsModel(model.Model):
 			print(e)
 
 	def getBadgeNames(self):
+		"""
+		returns badges
+
+		Parameters
+		----------
+
+		Returns
+		-------
+		badgeNames : list
+			list of badges
+		"""
+
 		getBadgeNamesQuery = \
 		'''
 			SELECT bname
@@ -515,14 +527,9 @@ class PostsModel(model.Model):
 		'''
 			SELECT p.pid AS pID, p.pdate AS pDate , p.title AS Title , p.body AS Body , p.poster AS Poster,
             IFNULL((SELECT MAX(v.vno) FROM votes v WHERE p.pid=v.pid),0) AS no_of_votes,
-            (SELECT COUNT(DISTINCT a.pid) FROM questions q ,answers a WHERE q.pid=p.pid AND a.qid=q.pid) AS no_of_answers,
-            (SELECT "N/A" FROM answers a WHERE p.pid = a.pid),
-
-            ((p.title like '%a%') OR (p.body like '%a%') OR (SELECT COUNT(DISTINCT t.tag) FROM tags t WHERE t.tag like '%a%'AND t.pid=p.pid))
-            AS Matches FROM posts p
-            WHERE p.pid = ? AND
-			Matches > 0
-            ;
+            (SELECT COUNT(DISTINCT a.pid) FROM questions q ,answers a WHERE q.pid=p.pid AND a.qid=q.pid) AS no_of_answers
+			FROM posts p
+			WHERE p.pid = ?;
 		'''
 
 		try:
