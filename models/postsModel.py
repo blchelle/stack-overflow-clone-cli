@@ -473,6 +473,18 @@ class PostsModel(model.Model):
 			print(e)
 
 	def getBadgeNames(self):
+		"""
+		returns badges
+
+		Parameters
+		----------
+
+		Returns
+		-------
+		badgeNames : list
+			list of badges
+		"""
+
 		getBadgeNamesQuery = \
 		'''
 			SELECT bname
