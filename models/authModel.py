@@ -28,7 +28,7 @@ class AuthModel(model.Model):
 			SELECT *
 			FROM users
 			WHERE
-				uid = ?
+				uid LIKE ?
 				AND pwd = ?;
 		'''
 
@@ -36,7 +36,6 @@ class AuthModel(model.Model):
 			self.cursor.execute(loginQuery, (uid, password,))
 			return self.cursor.fetchone()
 		except sqlite3.Error as e:
-			
 			print(e)
 
 	def createAccount(self, name, city, uid, password):
@@ -95,7 +94,7 @@ class AuthModel(model.Model):
 		'''
 			SELECT uid
 			FROM users
-			WHERE uid = ?;
+			WHERE uid LIKE ?;
 		'''
 
 		try:
@@ -127,7 +126,7 @@ class AuthModel(model.Model):
 		'''
 			SELECT uid
 			FROM privileged
-			WHERE uid = ?;
+			WHERE uid LIKE ?;
 		'''
 
 

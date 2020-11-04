@@ -46,7 +46,7 @@ class AuthController:
 
 				while not uidIsUnique:
 					# Outputs an error message if the uid is not unique
-					self.view.logMessage('UID \'{}\' is taken :('.format(uid))
+					self.view.logMessage('UID \'{}\' is taken, please try again'.format(uid))
 
 					# Prompts and retrieves the desired uid
 					uid = self.view.getCreateAccountUid()
