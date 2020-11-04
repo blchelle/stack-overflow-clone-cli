@@ -86,7 +86,7 @@ class MainView(view.View):
         header+='    '+'PDATE'.ljust(max_len[1])
         header+='   '+'Title'.ljust(max_len[2])
         header+='   '+'Body'.ljust(max_len[3])
-        header+='  '+'UID'
+        header+='   '+'UID'
         header+='   '+'Votes'
         header+='   '+'Answers\n'
 
