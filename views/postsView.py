@@ -194,8 +194,6 @@ class PostsView(view.View):
 		string="   "
 		i=0
 		linkedQDetails=list(linkedQDetails)
-		if(linkedQDetails[7] == 'N/A'):
-			linkedQDetails[6] = 'N/A'
 		for column in linkedQDetails:
 			if(i <7):
 				string+=str(column).ljust(max_len[i], ' ')
