@@ -98,7 +98,7 @@ class MainView(view.View):
             if(post[7] == 'N/A'):
                 post[6] = 'N/A'
             for column in post:
-                if(i <7):
+                if(i < 7):
                     string+=str(column).ljust(max_len[i], ' ')
                 string+="   "
                 i+=1
@@ -106,7 +106,7 @@ class MainView(view.View):
             postList.append(string)
         if(showprompt):
             postList.append("Show more results")
-        
+
         postList.append("Back")
 
 

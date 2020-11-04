@@ -129,7 +129,7 @@ class MainModel(model.Model):
                 max_len=[10,10,10,10,10,10,10,10]
 
             self.connection.commit()
-            return result,max_len
+            return result, max_len
         except sqlite3.Error as e:
             self.connection.rollback()
             print(e)
